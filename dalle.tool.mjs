@@ -10,6 +10,7 @@ export default async function generateImage({ text }, ctx) {
       "Authorization": `Bearer ${ctx.env.OPENAI_KEY}`
     },
     body: JSON.stringify({
+      model: "dall-e-3",
       prompt: text,
       n: 1,
       size: "1024x1024",

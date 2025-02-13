@@ -5,5 +5,6 @@ export default async function fetchFromUrl({ url }) {
   if (!response.ok) {
     throw new Error(`Error: ${response.status} ${response.statusText}`);
   }
-  return await response.text();
+  const res =  await response.text();
+  return res.replace(/@/g, "\\@")
 }

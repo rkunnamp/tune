@@ -153,5 +153,3 @@ u: how to make a tool?
 
 For any inquiries or support, feel free to [open an issue](https://github.com/iovdin/tune/issues) on GitHub. Or drop a message to [Tune Discord Channel](https://discord.com/channels/1293110380813484063/1293110381400559689)
 
-
-
