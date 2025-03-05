@@ -917,7 +917,8 @@ $roles = {
     "v": "variable",
     "err": "error",
     "c": "comment",
-    "tr": "tool"
+    "tr": "tool_result",
+    "tool": "tool_result"
   },
   long2short: {
     "system": "s",
@@ -925,16 +926,16 @@ $roles = {
     "audio": "au",
     "assistant": "a",
     "tool_call": "tc",
-    "variable": "v",
     "error": "err",
     "comment": "c",
+    "tool_result": "tr",
     "tool": "tr"
   }
 };
 
 function text2roles(text, lineNum) {
   return (function(it) {
-    it = it.split(/(^(?:s|u|a|tc|tr|c|e|au|v|err)\s*:)/gm);
+    it = it.split(/(^(?:s|system|u|user|a|assistant|tc|tool_call|tr|tool_result|c|comment|au|audio|err|error)\s*:)/gm);
     it = it.reduce((function(memo, item, index, arr) {
       memo.row = memo.row || 0;
       (function(it) {
@@ -942,7 +943,7 @@ function text2roles(text, lineNum) {
         if (it) {
           var res;
           res = {
-            role: $roles.short2long[it[1]],
+            role: $roles.short2long[it[1]] || it[1],
             content: arr[index + 1]
               .replace(/\n$/, ""),
             row: memo.row,
@@ -954,7 +955,7 @@ function text2roles(text, lineNum) {
           _ref = undefined;
         }
         return _ref;
-      })(item.match(/^(s|u|a|tc|au|tr|c|err)\s*:/));
+      })(item.match(/^(s|system|u|user|a|assistant|tc|tool_call|tr|tool_result|c|comment|au|audio|err|error)\s*:/));
       return memo;
     }), []);
     it = it.map((function() {
@@ -1098,13 +1099,13 @@ async function text2ast(text, ctx) {
     ctx = makeContext(ctx);
     nodeStack = nodeStack || [];
     var re;
-    re = /(?<prefix1>@{1,2})\{(?<name1>[^\}]+)\}|(?<prefix>@{1,2})(?<name>[\S]+)|(?<role>^(?:s|u|a|tc|tr|c|au|err))\s*(?<roleName>\([^\)]+\))?\s*:/gm;
+    re = /(?<prefix1>@{1,2})\{(?<name1>[^\}]+)\}|(?<prefix>@{1,2})(?<name>[\S]+)|(?<role>^(?:s|system|u|user|a|assistant|tc|tool_call|tr|tool_result|c|comment|au|audio|err|error))\s*(?<roleName>\([^\)]+\))?\s*:/gm;
     var nodes;
     nodes = [];
     var index;
     index = 0;
     while (m = re.exec(text)) {
-      if (((lastRole === "a" || lastRole === "tc" || lastRole === "err") && !m.groups.role)) continue;
+      if (((lastRole === "a" || lastRole === "tc" || lastRole === "err" || lastRole === "assistant" || lastRole === "tool_call" || lastRole === "error") && !m.groups.role)) continue;
       if (((m.index > 0) && (text.charAt(m.index - 1) === String.fromCharCode(92)))) continue;
       if ((m.index - index)) {
         nodes.push({
@@ -1246,11 +1247,11 @@ async function text2ast(text, ctx) {
 text2ast;
 
 function ast2payload(ast) {
-  var payload, toolId, tools, configs, messages, roles, lastRole, lastChar;
+  var payload, toolId, tools, llms, messages, roles, lastRole, lastChar;
   var payload;
   var toolId;
   var tools;
-  var configs;
+  var llms;
   var messages;
   var roles;
   var lastRole;
@@ -1258,7 +1259,7 @@ function ast2payload(ast) {
   payload = {};
   toolId = 0;
   tools = [];
-  configs = [];
+  llms = [];
   messages = [];
   roles = [];
   lastRole = undefined;
@@ -1392,8 +1393,14 @@ function ast2payload(ast) {
         case "tr":
           _ref = "tool";
           break;
+        case "tool":
+          _ref = "tool";
+          break;
+        case "tool_result":
+          _ref = "tool";
+          break;
         default:
-          _ref = undefined;
+          _ref = item.role;
       }
       res = {
         role: _ref,
@@ -1402,13 +1409,10 @@ function ast2payload(ast) {
       if (item.roleName) res.name = item.roleName;
       return res;
     }))
-    .filter((function(item) {
-      return (item.role === "system" || item.role === "user" || item.role === "assistant" || item.role === "tool_call" || item.role === "tool" || item.role === "audio");
-    }))
     .map((function(item) {
       item.nodes = item.nodes.reduce((function(memo, node) {
-        if ((node.type === "config")) {
-          configs.push(node);
+        if ((node.type === "llm")) {
+          llms.push(node);
         } else if (node.type === "tool") {
           tools.push(node);
         } else {
@@ -1480,23 +1484,23 @@ function ast2payload(ast) {
     }))
     .reduce(transformRoles, Array());
   if (tools.length) payload.tools = tools;
-  if (configs.length) payload.config = configs["slice"](-1)[0];
+  if (llms.length) payload.llm = llms["slice"](-1)[0];
   return payload;
 }
 ast2payload;
 async function payload2http(payload, ctx) {
-  var config, stack, lastStack, body, _ref;
+  var llm, stack, lastStack, body, _ref;
   ctx = makeContext(ctx);
-  var config;
-  config = payload.config;
-  delete payload.config;
-  if (!config) config = await ctx.resolve("*", "config");
-  if (!config) {
+  var llm;
+  llm = payload.llm;
+  delete payload.llm;
+  if (!llm) llm = await ctx.resolve("*", "llm");
+  if (!llm) {
     var stack;
     stack = TuneError.ctx2stack(ctx);
     var lastStack;
     lastStack = stack.pop();
-    throw new TuneError("config file not found", (((typeof lastStack !== "undefined") && (lastStack !== null) && !Number.isNaN(lastStack) && (typeof lastStack.filename !== "undefined") && (lastStack.filename !== null) && !Number.isNaN(lastStack.filename)) ? lastStack.filename : undefined), (((typeof lastStack !== "undefined") && (lastStack !== null) && !Number.isNaN(lastStack) && (typeof lastStack.row !== "undefined") && (lastStack.row !== null) && !Number.isNaN(lastStack.row)) ? lastStack.row : undefined), (((typeof lastStack !== "undefined") && (lastStack !== null) && !Number.isNaN(lastStack) && (typeof lastStack.col !== "undefined") && (lastStack.col !== null) && !Number.isNaN(lastStack.col)) ? lastStack.col : undefined), stack);
+    throw new TuneError("llm file not found", (((typeof lastStack !== "undefined") && (lastStack !== null) && !Number.isNaN(lastStack) && (typeof lastStack.filename !== "undefined") && (lastStack.filename !== null) && !Number.isNaN(lastStack.filename)) ? lastStack.filename : undefined), (((typeof lastStack !== "undefined") && (lastStack !== null) && !Number.isNaN(lastStack) && (typeof lastStack.row !== "undefined") && (lastStack.row !== null) && !Number.isNaN(lastStack.row)) ? lastStack.row : undefined), (((typeof lastStack !== "undefined") && (lastStack !== null) && !Number.isNaN(lastStack) && (typeof lastStack.col !== "undefined") && (lastStack.col !== null) && !Number.isNaN(lastStack.col)) ? lastStack.col : undefined), stack);
   }
   var body;
   body = Object.assign({}, payload);
@@ -1507,9 +1511,9 @@ async function payload2http(payload, ctx) {
     }
   }));
   try {
-    _ref = await config.exec(body, ctx);
+    _ref = await llm.exec(body, ctx);
   } catch (e) {
-    throw new TuneError(e.message, (config.filename || config.fullname || config.name), config.row, config.col, config.stack, e);
+    throw new TuneError(e.message, (llm.filename || llm.fullname || llm.name), llm.row, llm.col, llm.stack, e);
   }
   return _ref;
 }
@@ -1771,27 +1775,41 @@ function text2run(text, ctx, opts) {
 }
 text2run;
 
-function msg2text(msg) {
+function msg2text(msg, long) {
   var _ref, _ref0, _ref1;
+
+  function mkline(role, content) {
+    return tpl("{role}: {content}", {
+      role: (long ? role : $roles.long2short[role]),
+      content: content
+    });
+  }
+  mkline;
   if (Array.isArray(msg)) {
     _ref1 = msg
-      .map(msg2text)
+      .map((function(item) {
+        return msg2text(item, long);
+      }))
       .join("\n");
   } else {
     switch (msg.role) {
       case "user":
         if (((typeof msg.content === "string") || (msg.content instanceof String))) {
-          _ref0 = (msg.name ? ("u(" + msg.name + "): " + msg.content) : ("u: " + msg.content));
+          _ref0 = (msg.name ? tpl("{role}({name}): {content}", {
+            name: msg.name,
+            content: msg.content,
+            role: (long ? "user" : "u")
+          }) : mkline("user", msg.content));
         } else if (Array.isArray(msg.content)) {
           _ref0 = msg.content
             .map((function(item) {
               var _ref1;
               switch (item.type) {
                 case "text":
-                  _ref1 = ("u: " + item.text);
+                  _ref1 = mkline("user", item.text);
                   break;
                 case "tool_result":
-                  _ref1 = ("tr: " + item.content);
+                  _ref1 = mkline("tool_result", item.content);
                   break;
                 default:
                   _ref1 = undefined;
@@ -1808,17 +1826,18 @@ function msg2text(msg) {
       case "assistant":
         _ref = (function(res) {
           if (((typeof msg.content === "string") || (msg.content instanceof String))) {
-            res.push("a: " + msg.content);
+            res.push(mkline("assistant", msg.content));
           } else if (Array.isArray(msg.content)) {
             res.push(msg.content
               .map((function(item) {
                 var _ref1;
                 switch (item.type) {
                   case "text":
-                    _ref1 = ("a: " + item.text);
+                    _ref1 = mkline("assistant", item.text);
                     break;
                   case "tool_use":
-                    _ref1 = tpl("tc: {name} {args}", {
+                    _ref1 = tpl("{role}: {name} {args}", {
+                      role: (long ? "tool_call" : "tc"),
                       name: item.name,
                       args: (function(it) {
                         it = ((it.text && (1 === Object.keys(it).length)) ? it.text : JSON.stringify(it));
@@ -1834,7 +1853,9 @@ function msg2text(msg) {
               }))
               .join("\n"));
           }
-          if (msg.audio) res.push(tpl("au: @{id} {expires_at}\n{transcript}", msg.audio));
+          if (msg.audio) res.push(tpl("{role}: @{id} {expires_at}\n{transcript}", extend(msg.audio, {
+            role: (long ? "audio" : "au")
+          })));
           if (msg.tool_calls) res.push(msg.tool_calls
             .map((function(tc) {
               var args, text;
@@ -1844,10 +1865,11 @@ function msg2text(msg) {
               text = args.text;
               delete args.text;
               args = (Object.keys(args).length ? JSON.stringify(args) : undefined);
-              return tpl("tc: {name}{ args}{\ntext}", {
+              return tpl("{role}: {name}{ args}{\ntext}", {
                 name: tc.function.name,
                 args: args,
-                text: text
+                text: text,
+                role: (long ? "tool_call" : "tc")
               });
             }))
             .join("\n"));
@@ -1855,10 +1877,10 @@ function msg2text(msg) {
         })([]);
         break;
       case "tool":
-        _ref = ("tr: " + msg.content);
+        _ref = mkline("tool_result", msg.content);
         break;
       case "error":
-        _ref = ("err: " + msg.content);
+        _ref = mkline("error ", msg.content);
         break;
       default:
         _ref = undefined;
@@ -1894,7 +1916,7 @@ function unescape(text) {
   return String((((typeof text !== "undefined") && (text !== null) && !Number.isNaN(text)) ? text : (((typeof "" !== "undefined") && ("" !== null) && !Number.isNaN("")) ? "" : undefined)))
     .replace(/\\(?<item>@{1,2}\{\s*[~\.\-\w/]+\s*)(?<proc>(?:\s*\|\s*\w+(?:\s+\w+)*)*\})/g, "$<item>$<proc>")
     .replace(/\\(?<item>@{1,2}[~\.\-\w/]+)/g, "$<item>")
-    .replace(/^\\(s|u|a|c|tr|tc|err):/gm, "$1:");
+    .replace(/^\\(s|system|u|user|a|assistant|c|comment|tr|tool_result|tc|tool_call|err|error):/gm, "$1:");
 }
 unescape;
 
@@ -2002,7 +2024,7 @@ exports.msg2text = msg2text;
 exports.msg2role = msg2role;
 exports.text2cut = text2cut;
 exports.TuneError = TuneError;
-exports.text2var = text2var;
+exports.text2cut = text2cut;
 exports.text2payload = text2payload;
 exports.payload2http = payload2http;
 exports.envmd = envmd;

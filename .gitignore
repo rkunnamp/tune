@@ -4,7 +4,6 @@ files
 .filest
 node_modules
 __pycache__
-node_modules
 .rag
 .ragindex
 chats
