@@ -914,7 +914,6 @@ $roles = {
     "a": "assistant",
     "au": "audio",
     "tc": "tool_call",
-    "v": "variable",
     "err": "error",
     "c": "comment",
     "tr": "tool_result",
@@ -1643,7 +1642,7 @@ function text2run(text, ctx, opts) {
     if ((stopVal === "step")) {
       _ref = !!lastMsg;
     } else if (stopVal === "assistant") {
-      _ref = (!!lastMsg && (lastMsg.role === "assistant") && !!lastMsg.content);
+      _ref = (!!lastMsg && (lastMsg.role === "assistant") && !!lastMsg.content && !lastMsg.tool_calls);
     } else if (typeof stopVal === "function") {
       _ref = stopVal(msgs);
     } else {
@@ -1681,7 +1680,7 @@ function text2run(text, ctx, opts) {
           err.stack = TuneError.ctx2stack(ctx);
           throw err;
         }
-        msgs.push(res.choices[0].message);
+        msgs.push((((typeof res !== "undefined") && (res !== null) && !Number.isNaN(res) && (typeof res.message !== "undefined") && (res.message !== null) && !Number.isNaN(res.message)) ? res.message : (((typeof res !== "undefined") && (res !== null) && !Number.isNaN(res) && (typeof res.choices !== "undefined") && (res.choices !== null) && !Number.isNaN(res.choices) && (typeof res.choices[0] !== "undefined") && (res.choices[0] !== null) && !Number.isNaN(res.choices[0]) && (typeof res.choices[0].message !== "undefined") && (res.choices[0].message !== null) && !Number.isNaN(res.choices[0].message)) ? res.choices[0].message : undefined)));
         continue;
       }
       var reader;
@@ -1779,10 +1778,14 @@ function msg2text(msg, long) {
   var _ref, _ref0, _ref1;
 
   function mkline(role, content) {
-    return tpl("{role}: {content}", {
-      role: (long ? role : $roles.long2short[role]),
+    return (long ? tpl("{role}:{new_line}{content}", {
+      role: role,
+      content: content,
+      new_line: ((role === "system" || role === "user" || role === "assistant" || role === "tool_result") ? "\n" : " ")
+    }) : tpl("{role}: {content}", {
+      role: $roles.long2short[role],
       content: content
-    });
+    }));
   }
   mkline;
   if (Array.isArray(msg)) {
@@ -1825,7 +1828,7 @@ function msg2text(msg, long) {
         break;
       case "assistant":
         _ref = (function(res) {
-          if (((typeof msg.content === "string") || (msg.content instanceof String))) {
+          if ((msg.content && ((typeof msg.content === "string") || (msg.content instanceof String)))) {
             res.push(mkline("assistant", msg.content));
           } else if (Array.isArray(msg.content)) {
             res.push(msg.content
@@ -1878,6 +1881,12 @@ function msg2text(msg, long) {
         break;
       case "tool":
         _ref = mkline("tool_result", msg.content);
+        break;
+      case "system":
+        _ref = mkline("system", msg.content);
+        break;
+      case "comment":
+        _ref = mkline("comment", msg.content);
         break;
       case "error":
         _ref = mkline("error ", msg.content);
