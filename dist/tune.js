@@ -1674,9 +1674,9 @@ function text2run(text, ctx, opts) {
       ctype = res.headers.get("content-type");
       if ((!stream || ctype.includes("application/json"))) {
         res = await res.json();
-        if ((((typeof res !== "undefined") && (res !== null) && !Number.isNaN(res) && (typeof res.error !== "undefined") && (res.error !== null) && !Number.isNaN(res.error)) ? res.error : undefined)) {
+        if (((((typeof res !== "undefined") && (res !== null) && !Number.isNaN(res) && (typeof res.error !== "undefined") && (res.error !== null) && !Number.isNaN(res.error)) ? res.error : undefined) || (res.object === "error"))) {
           var err;
-          err = new TuneError(tpl("{type: }{message}", res.error));
+          err = new TuneError(tpl("{type: }{message}", (((typeof res !== "undefined") && (res !== null) && !Number.isNaN(res) && (typeof res.error !== "undefined") && (res.error !== null) && !Number.isNaN(res.error)) ? res.error : (((typeof res !== "undefined") && (res !== null) && !Number.isNaN(res)) ? res : undefined))));
           err.stack = TuneError.ctx2stack(ctx);
           throw err;
         }
