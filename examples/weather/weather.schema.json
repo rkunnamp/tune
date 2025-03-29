@@ -1,0 +1,13 @@
+{
+  "description": "get weather using openweathermap",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "location": {
+        "type": "string",
+        "description": "Location for the weather forecast"
+      }
+    },
+    "required": ["location"]
+  }
+}

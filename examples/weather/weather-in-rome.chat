@@ -1,0 +1,53 @@
+user: @weather
+what is the wether in rome?
+tool_call: weather {"location":"Rome"}
+tool_result:
+{
+  coord: { lon: 12.4828, lat: 41.8931 },
+  weather: [
+    {
+      id: 802,
+      main: 'Clouds',
+      description: 'scattered clouds',
+      icon: '03d'
+    }
+  ],
+  base: 'stations',
+  main: {
+    temp: 13.62,
+    feels_like: 13.31,
+    temp_min: 10.86,
+    temp_max: 14.55,
+    pressure: 1000,
+    humidity: 87,
+    sea_level: 1000,
+    grnd_level: 992
+  },
+  visibility: 10000,
+  wind: { speed: 3.09, deg: 230 },
+  clouds: { all: 40 },
+  dt: 1743265639,
+  sys: {
+    type: 2,
+    id: 2000926,
+    country: 'IT',
+    sunrise: 1743224272,
+    sunset: 1743269491
+  },
+  timezone: 3600,
+  id: 3169070,
+  name: 'Rome',
+  cod: 200
+}
+assistant:
+The current weather in Rome is as follows:
+
+- **Condition**: Scattered clouds
+- **Temperature**: 13.62°C (feels like 13.31°C)
+- **Minimum Temperature**: 10.86°C
+- **Maximum Temperature**: 14.55°C
+- **Humidity**: 87%
+- **Wind Speed**: 3.09 m/s (from the southwest)
+- **Cloud Cover**: 40%
+
+Overall, it's a cool day with some clouds in the sky.
