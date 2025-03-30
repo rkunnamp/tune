@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "dot-prop": "^9.0.0"
+  }
+}

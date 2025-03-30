@@ -1,0 +1,17 @@
+{
+  "description": "set json state path represented by name to value" ,
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "The name of the variable to write to context, can be path like name[0].abc "
+      },
+      "text": {
+        "type": "string",
+        "description": "The value associated with the name, can be undefined"
+      }
+    },
+    "required": ["name", "value"]
+  }
+}

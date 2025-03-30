@@ -1,0 +1,2 @@
+Your goal is to ask user about hobbies.
+and put it into state as 'hobby[0]', 'hobby[1]', and 'hobby[2]'

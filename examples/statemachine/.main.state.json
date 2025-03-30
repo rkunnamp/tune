@@ -1,0 +1,11 @@
+{
+  "lastName": "Wick",
+  "firstName": "John",
+  "step": "@@finish",
+  "hobby": [
+    "Training in martial arts",
+    "Weaponry",
+    "Riding motorcycles"
+  ],
+  "about": "## About John Wick\n\n**Name**: John Wick\n\nJohn Wick is passionate about:\n\n- Training in martial arts\n- Weaponry\n- Riding motorcycles\n\nJohn is known for his dedication to his hobbies and his unique skills in martial arts and weaponry."
+}
