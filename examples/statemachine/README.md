@@ -73,49 +73,69 @@ export default function stateMachine(state) {
 
 ### Chat 
 ```chat
-system:  @gpt-4o @setState
+system:  
+@gpt-4o @setState
 You are building about page for the user 
 
 @@{ state.step | init @@step1 }
+
 assistant:
 Can you please tell me your first name and last name?
+
 user: 
 John
+
 assistant:
 And what is your last name, John?
+
 user:
 Wick 
+
 tool_call: setState {"name":"firstName"}
 John
+
 tool_call: setState {"name":"lastName"}
 Wick
+
 tool_result:
 set
+
 tool_result:
 set
+
 comment:
 Here is the switch to the next step happened
+
 assistant:
 Great, John Wick! Could you please tell me about your hobbies? You can mention up to three.
+
 user:
 Training in martial arts and weaponry.
+
 tool_call: setState {"name":"hobby[0]"}
 Training in martial arts
+
 tool_call: setState {"name":"hobby[1]"}
 Weaponry
+
 tool_result:
 set
+
 tool_result:
 set
+
 assistant:
 Fantastic! I've noted your hobbies as "Training in martial arts" and "Weaponry." If you have a third hobby you'd like to share, please let me know!
+
 user: 
 Riding motorcycles.
 
 tool_call: setState {"name":"hobby[2]"}
 Riding motorcycles
+
 tool_result:
 set
+
 assistant:
 Great, you enjoy "Riding motorcycles" as well. Could you share a little about your professional background or any notable achievements you have?
 <cut for brevity>
