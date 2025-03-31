@@ -1,0 +1,5 @@
+@anthropic/claude-3.7-sonnet @rf @wf @sh @patch
+current filestructure:
+```
+@{| shp git ls-files }
+```
