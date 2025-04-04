@@ -48,7 +48,8 @@ module.exports = async function openrouter(name, context, type, next) {
     return next();
   }
   const models = await getModels();
-  const model = models.find((item) => item.id === name);
+  const baseName = name.split(":")[0]
+  const model = models.find((item) => item.id === baseName);
   if (!model) {
     return next();
   }
@@ -62,10 +63,13 @@ module.exports = async function openrouter(name, context, type, next) {
         headers: {
           "content-type": "application/json",
           authorization: `Bearer ${key}`,
+          "HTTP-Referer": "https://iovdin.github.io/tune",
+          "X-Title": "tune"
         },
         body: JSON.stringify({
+          model: name,
           ...payload,
-          model: model.id,
+          messages: payload.messages.filter(msg => msg.role !== 'comment'),
         }),
       };
     },

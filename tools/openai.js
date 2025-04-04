@@ -17,7 +17,8 @@ module.exports = function(props, transform) {
       },
       body: JSON.stringify({ 
         ...props,
-        ...payload
+        ...payload,
+        messages: payload.messages.filter(msg => msg.role !== 'comment'),
       })
     })
   }

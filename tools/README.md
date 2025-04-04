@@ -1,5 +1,5 @@
 ## Tools & Processors & Contexts
-This is a personal directory of [tools] [processors] and [contexts] and prompts.
+This is a personal directory of [tools](https://iovdin.github.io/tune/template-language/tools) [processors](https://iovdin.github.io/tune/template-language/tools) and [contexts](https://iovdin.github.io/tune/template-language/context) and prompts.
 
 They're supposed to be forked/cloned, and changed.
 Set `TUNE_PATH` to the directory to make them available in tune editor extensions
@@ -22,15 +22,17 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
   - [linenum](#linenum)
   - [text](#text)
   - [resolve](#resolve)
+  - [prop](#prop)
 
 
 ## Prompts
 * `short.txt` - for short answers
 * `echo.txt` - to debug variable expansions and context
-* `dev.txt` - developer copilot prompt 
+* `dev.txt` - developer copilot prompt with claude 3.7
+* `gemini-dev.txt` - developer copilot use gemini-2.5-pro with
 
 ## LLMs
-Contexts: `openai.ctx.js`, `openrouter.ctx.js`, `mistral.ctx.js`, `groq.ctx.js`, `gemini.ctx.js`.
+Contexts: `openai.ctx.js`, `anthropic.ctx.js` `openrouter.ctx.js`, `mistral.ctx.js`, `groq.ctx.js`, `gemini.ctx.js`.
 Put together in `default.ctx.js`.
 
 Download model list from the provider (saved in .cache directory), and then can be used by name in the `.chat` files.
@@ -41,6 +43,7 @@ system:
 @mistral-small-latest - get model using mistral.ctx.js
 @qwen-qwq-32b - uses groq.ctx.js
 @google/gemini-2.0-flash will use gemini.ctx.js
+@claude-3-7-sonnet-20250219 will use antrophic.ctx.js
 ```
 To connect a model there has to be OPENAI_KEY or OPENROUTER_KEY or MISTRAL_KEY or GROQ_KEY or GEMINI_KEY in the environment or in `.env` file
 
@@ -108,6 +111,9 @@ Insert shell output
 system:
 include project file list to system prompt
 @{| shp git ls-files }
+
+include buffer content on osx
+@{| shp pbpaste }
 ```
 
 ### `init` 
@@ -172,15 +178,19 @@ Treat special files (`.ctx.js`, `.llm.js`, `.tool.js`)  like text
 ```chat
 system: 
 @echo
+
 user: 
 content 
 @rf.tool.mjs
+
 assistant: 
 content
-u: 
+
+user: 
 content
 @{ rf.tool.mjs | text}
-a: 
+
+assistant: 
 content
 import { promises as fs } from 'fs';
 import { relative, dirname } from 'path' 
@@ -189,18 +199,21 @@ import { relative, dirname } from 'path'
 
 ### `resolve`
 Given filename resolve it and include
-`queryimage.tool.chat`
+
 ```chat
-user:  @gpt-4o-mini
-@query
-@{ image | resolve }
+@{ filename | resolve }
 ```
+
+see `examples/queryimage` example
+
+### `prop`
+set additional propertis for llm
 
 ```chat
 system: 
-@queryimage
-user: 
-what is on the image at file file/to/image.jpg
-tool_call: queryimage {"query": "what is on the image?", "image": "file/to/image.jpg" }
+@{ o3-mini | prop reasoning_effort=low }
+or
+@{ gpt-4o-search-preview | prop web_search_options={\} }
 ```
 
+see `examples/queryimage` example

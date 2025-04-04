@@ -100,9 +100,9 @@ module.exports = async function mistral(name, context, type, next) {
           authorization: `Bearer ${key}`,
         },
         body: JSON.stringify({
-          messages,
-          ...rest,
           model: model.id,
+          messages: messages.filter(msg => msg.role !== 'comment'),
+          ...rest,
         }),
       };
     },

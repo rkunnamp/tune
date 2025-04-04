@@ -73,6 +73,7 @@ module.exports = async function openai(name, context, type, next) {
         body: JSON.stringify({
           model: model.id,
           ...payload,
+          messages: payload.messages.filter(msg => msg.role !== 'comment'),
         }),
       };
     },

@@ -2,7 +2,7 @@ const path = require("path");
 const fs = require("fs");
 
 const cacheDir = path.join(__dirname, ".cache");
-const cacheFile = path.join(cacheDir, "groq_models.json");
+const cacheFile = path.join(cacheDir, "antrophic_models.json");
 let cache;
 
 // Create cache directory if it doesn't exist
@@ -27,10 +27,12 @@ async function getModels(apiKey) {
     }
   }
 
-  const res = await fetch("https://api.groq.com/openai/v1/models", {
+  // Fetch from API if cache doesn't exist, is too old, or couldn't be read
+  const res = await fetch("https://api.anthropic.com/v1/models", {
     headers: {
-      Authorization: `Bearer ${apiKey}`,
-    },
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01"
+    }
   });
 
   if (!res.ok) throw new Error(`Error: ${res.status} ${res.statusText}`);
@@ -44,28 +46,26 @@ async function getModels(apiKey) {
 }
 
 const envr = /^[A-Z_0-9]+$/;
-module.exports = async function groq(name, context, type, next) {
+module.exports = async function openai(name, context, type, next) {
   if (envr.test(name)) {
     return next();
   }
-  const key = await context.read("GROQ_KEY");
-  if (!key) {
+  const apiKey = await context.read("ANTROPHIC_KEY");
+  if (!apiKey) {
     return next();
   }
-  // const shortName  = name.split("/")[1]
-  const models = await getModels(key);
 
+  const models = await getModels(apiKey);
   const model = models.find((item) => item.id === name);
   if (!model) {
     return next();
   }
-
   return {
     type: "llm",
     exec: async (payload, ctx) => {
-      const key = await ctx.read("GROQ_KEY");
+      const key = await context.read("ANTROPHIC_KEY");
       return {
-        url: "https://api.groq.com/openai/v1/chat/completions",
+        url: "https://api.anthropic.com/v1/chat/completions",
         method: "POST",
         headers: {
           "content-type": "application/json",
@@ -74,7 +74,6 @@ module.exports = async function groq(name, context, type, next) {
         body: JSON.stringify({
           model: model.id,
           ...payload,
-          messages: payload.messages.filter(msg => msg.role !== 'comment'),
         }),
       };
     },

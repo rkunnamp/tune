@@ -83,8 +83,9 @@ module.exports = async function gemini(name, context, type, next) {
           authorization: `Bearer ${key}`,
         },
         body: JSON.stringify({
-          ...payload,
           model: model.name,
+          ...payload,
+          messages: payload.messages.filter(msg => msg.role !== 'comment'),
         }),
       };
     },
