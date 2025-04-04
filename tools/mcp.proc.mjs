@@ -158,7 +158,7 @@ export default async function mcp(node, args, ctx) {
       const content = res.content
         .map(item => {
           if (item.type == "text") {
-            return item.text
+            return item.text.replaceAll("@", "\\@")
           }
           // not supported yet
           return ""
