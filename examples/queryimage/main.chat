@@ -1,0 +1,7 @@
+system: @queryimage
+user: 
+what is on image.jpg?
+tool_call: queryimage {"filename":"image.jpg"}
+What is in this image?
+tool_result:
+This image is a black-and-white illustration depicting two children playing. The child on the left is a boy wearing a sleeveless shirt and shorts, and he appears to be running. The child on the right is a girl with her hair tied back in a ponytail, wearing a dress with vertical stripes and a bow at the neckline. She also seems to be in motion, possibly chasing or playing with the boy. Both children are barefoot and are running on a grassy surface. The illustration has a simple, cartoon-like style.
