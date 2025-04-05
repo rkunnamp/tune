@@ -31,25 +31,25 @@ If you chat filename is `main.chat` the state file would be `.main.state.json`
 
 ### Steps
 Lets keep steps' prompts in `step1.prompt` `step2.prompt` etc.
-and connect the prompt accoring to what step is it right now.
+and connect the prompt according to what step is it right now.
 
 ```chat
 system:
 @@state.step
 ```
-This will read the state's `phase` property and put the file content into the system prompt.
+This will read the state's `step` property and put the file content into the system prompt.
 ```json
 {
-    "step": "@step1"
+    "step": "@@step1"
 }
 ```
 
-Double `@@state.step` will first expand into `@step1` and then expand into contents of the `step1.prompt`. read more about [`@` and `@@`](https://iovdin.github.io/tune/template-language/at-symbol)
+Double `@@state.step` will first expand into `@@step1` and then expand into contents of the `step1.prompt`. read more about [`@` and `@@`](https://iovdin.github.io/tune/template-language/at-symbol)
 
 Initial `step` value might be empty, so we'll user `init` [processor](https://iovdin.github.io/tune/template-language/processors) to initialize the value of the `step`.
 ```chat
 system:
-@@{ state.step | init @step1 }
+@@{ state.step | init @@step1 }
 ```
 
 ### Make the steps

@@ -12,6 +12,7 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
   - [wf write file](#wf-write-file)
   - [patch](#patch)
   - [sh shell](#sh-shell)
+  - [jina_r](#jina-r) get webpage content
 - [Processors](#processors)
   - [shp](#shp)
   - [init](#init)
@@ -89,7 +90,7 @@ patched
 
 ### `sh` shell
 
-```
+```chat
 user: @sh
 find with ripgrep where echo is used
 tool_call: sh
@@ -99,6 +100,32 @@ tool_result:
 ./README.md:  const text = "s: \@echo\nu: hello world";
 ./tools/echo.txt:you are echo, you print everything back
 ./tools/README.md:* `echo.txt` - to debug variable expansions and context
+```
+
+### `jina_r`
+Fetch webpage content with [jina reader](https://jina.ai/reader) api.
+It works without a key to some limit. Put `JINA_KEY` into `.env` for higher rate limits
+
+```chat
+user: @jina_r
+take https://iovdin.github.io/tune/ page content
+and put it into `home` directory
+then make short summary
+
+tool_call: jina_r {"url":"https://iovdin.github.io/tune/","filename":"home/tune_page_content.md"}
+
+tool_result: 
+@home/tune_page_content.md
+
+assistant:
+The content from the "Tune" page has been successfully retrieved and saved into the `home/tune_page_content.md` file. Below is a short summary of the page:
+
+---
+
+**Summary of Tune - Your Everyday LLM Toolkit:**
+
+Tune is a versatile toolkit designed for developers and users to effectively interact with Large Language Models (LLMs). It allows users to chat with AI, build applications, and create AI agents in a simple manner. 
+<cut for brevity>
 ```
 
 
