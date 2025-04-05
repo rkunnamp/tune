@@ -12,8 +12,10 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
   - [wf](#wf) write file
   - [patch](#patch) patch file
   - [sh](#sh) execute shell command
-  - [jina_r](#jina-r) get webpage content
+  - [jina_r](#jina-r) read webpage content
   - [brave](#brave) web search
+  - [openai_tts](#openai-tts) text to speech from openai
+  - [turn](#turn) turn based agent
 - [Processors](#processors)
   - [shp](#shp) include shell command output
   - [init](#init) set initial value
@@ -160,7 +162,54 @@ For a better visual understanding ... On 2 April, the Trump administration unvei
 <cut for brevity>
 ```
 
+### `openai_tts`
+use openai [speech generation api](https://platform.openai.com/docs/guides/text-to-speech)
 
+```chat
+user: @openai_tts
+Read out in the style of Arnold Schwarzenegger:  
+Hasta la vista, baby!
+
+tool_call: openai_tts {"voice":"fable","filename":"hasta_la_vista_baby.mp3","instructions":"Voice: Deep, powerful, and energetic, with a strong Austrian accent that is unmistakable.  Punctuation: Pronounced with emphatic pauses for dramatic effect.  Delivery: Confident and assertive, with a clear and impactful enunciation.  Phrasing: Bold and straightforward, using a commanding tone that captures attention.  Tone: Iconic and motivating, embodying a legendary action hero."}
+Hasta la vista, baby!
+
+tool_result: 
+speech generated
+```
+
+### `turn`
+A way to switch roles when building multistep agents [read more](https://iovdin.github.io/tune/examples/multi-agent) 
+```chat
+system: @turn @gpt-4o
+You're playing 20 questions game.
+You switch turns between 'thinker' and 'player' agent. 
+Current agent stored in agent.txt file
+'player' always plays first
+
+@@agent|init
+assistant: 
+Is it a living thing?
+
+tool_call: turn {"role":"thinker","filename":"agent.txt"}
+tool_result: now it is turn of thinker to reply
+
+assistant: 
+No.
+
+tool_call: turn {"role":"player","filename":"agent.txt"}
+tool_result: now it is turn of player to reply
+
+assistant: 
+Is it something that can be used indoors?
+
+tool_call: turn {"role":"thinker","filename":"agent.txt"}
+tool_result: now it is turn of thinker to reply
+
+assistant: 
+Yes.
+
+...
+```
 
 
 ## Processors
@@ -214,7 +263,7 @@ system: @{ gpt-4o | log path/to/log.json }
 ### `mock` 
 Set variables inline in chat. 
 ```
-system: @{| mock hello=world } 
+system: @{| mock hello=world }
 @echo
 user: 
 @hello
@@ -272,9 +321,7 @@ set additional propertis for llm
 
 ```chat
 system: 
-@{ o3-mini | prop reasoning_effort=low }
+@{ o3-mini | prop reasoning_effort=low temperature=2.0 }
 or
 @{ gpt-4o-search-preview | prop web_search_options={\} }
 ```
-
-see `examples/queryimage` example
