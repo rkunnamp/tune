@@ -13,6 +13,7 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
   - [patch](#patch)
   - [sh shell](#sh-shell)
   - [jina_r](#jina-r) get webpage content
+  - [brave](#brave) web search
 - [Processors](#processors)
   - [shp](#shp)
   - [init](#init)
@@ -127,6 +128,36 @@ The content from the "Tune" page has been successfully retrieved and saved into 
 Tune is a versatile toolkit designed for developers and users to effectively interact with Large Language Models (LLMs). It allows users to chat with AI, build applications, and create AI agents in a simple manner. 
 <cut for brevity>
 ```
+
+### `brave` 
+Use [brave web search api](https://brave.com/search/api/). It requires `BRAVE_KEY` in your `.env`
+
+```chat
+system: 
+@brave
+today is @{| shp date }
+
+user: 
+what are the latest trumps tariffs?
+
+tool_call: brave
+latest Trump tariffs 2025
+
+tool_result: 
+Trump tariffs fallout: China retaliates, Vietnam talks, U.S. markets melt down
+https://www.cnbc.com/2025/04/04/trump-tariff-live-updates-retaliation-trade-war.html
+U.S. President Donald <strong>Trump</strong> pumps ... April 3, <strong>2025</strong>. Miami Herald | Tribune News Service | Getty Images · <strong>Trump</strong> touted a better-than-expected March jobs report as proof of the strength of his agenda. &quot;GREAT JOB NUMBERS, FAR BETTER THAN EXPECTED. IT&#x27;S ALREADY WORKING. HANG TOUGH, WE CAN&#x27;T LOSE!!!&quot; he wrote on Truth Social. The <strong>latest</strong> nonfarm payrolls report from the Bureau of Labor Statistics covers the month ending mid-March — before <strong>Trump</strong>&#x27;<strong>s</strong> <strong>latest</strong> <strong>tariff</strong> ...
+
+Trump Tariffs: The Economic Impact of the Trump Trade War
+https://taxfoundation.org/research/all/federal/trump-tariffs-trade-war/
+As of April 4, China, Canada, and ... April 4 will reduce US GDP by another 0.1 percent. In 2025, the Trump tariffs will <strong>increase federal tax revenues by $258.4 billion, or 0.85 percent of GDP</strong>, making the tariffs the largest tax hike since 1982....
+
+Trump tariffs: Visualising new US trade restrictions | World Economic Forum
+https://www.weforum.org/stories/2025/02/trump-tariffs-visualising-new-us-trade-restrictions/
+For a better visual understanding ... On 2 April, the Trump administration unveiled a new tariff regime that applies a <strong>baseline additional tariff of 10% on US imports from all countries</strong>....
+```
+
+
 
 
 ## Processors
