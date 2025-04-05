@@ -8,23 +8,23 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
 - [Prompts](#prompts)  
 - [LLMs](#llms)
 - [Tools](#tools)
-  - [rf read file](#rf-read-file)
-  - [wf write file](#wf-write-file)
-  - [patch](#patch)
-  - [sh shell](#sh-shell)
+  - [rf](#rf) read file
+  - [wf](#wf) write file
+  - [patch](#patch) patch file
+  - [sh](#sh) execute shell command
   - [jina_r](#jina-r) get webpage content
   - [brave](#brave) web search
 - [Processors](#processors)
-  - [shp](#shp)
-  - [init](#init)
-  - [mcp](#mcp)
-  - [json schema](#json_schema)
-  - [log](#log)
-  - [mock](#mock)
-  - [linenum](#linenum)
-  - [text](#text)
-  - [resolve](#resolve)
-  - [prop](#prop)
+  - [shp](#shp) include shell command output
+  - [init](#init) set initial value
+  - [mcp](#mcp) connect mcp tools
+  - [json schema](#json_schema) set json_schema response
+  - [log](#log) save llm payload
+  - [mock](#mock) set variables inline
+  - [linenum](#linenum) prepend line numbers
+  - [text](#text) convert any node to text node
+  - [resolve](#resolve) resolve a variable
+  - [prop](#prop) set additional properties of llm
 
 
 ## Prompts
@@ -55,7 +55,8 @@ To connect a model there has to be OPENAI_KEY or OPENROUTER_KEY or MISTRAL_KEY o
 ## Tools
 [Tools](https://iovdin.github.io/tune/template-language/tools) is a function that llm can run on your local machine or server
 
-### `rf` read file
+### `rf`
+Read file
 ```chat
 user: @rf
 can you read README.md?
@@ -65,7 +66,8 @@ tool_result:
 ```
 It takes optional `linenum` parameter so that file is included with line numbers - useful for patching
 
-### `wf` write file
+### `wf`
+Write to a file
 ```chat
 user: @wf 
 make a hello world javascript
@@ -89,8 +91,8 @@ tool_result:
 patched
 ```
 
-### `sh` shell
-
+### `sh`
+Execute shell command
 ```chat
 user: @sh
 find with ripgrep where echo is used
@@ -155,6 +157,7 @@ As of April 4, China, Canada, and ... April 4 will reduce US GDP by another 0.1 
 Trump tariffs: Visualising new US trade restrictions | World Economic Forum
 https://www.weforum.org/stories/2025/02/trump-tariffs-visualising-new-us-trade-restrictions/
 For a better visual understanding ... On 2 April, the Trump administration unveiled a new tariff regime that applies a <strong>baseline additional tariff of 10% on US imports from all countries</strong>....
+<cut for brevity>
 ```
 
 
