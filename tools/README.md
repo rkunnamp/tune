@@ -14,7 +14,7 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
   - [sh](#sh) execute shell command
   - [jina_r](#jina-r) read webpage content
   - [brave](#brave) web search
-  - [openai_tts](#openai-tts) text to speech from openai
+  - [openai_tts](#openai_tts) text to speech from openai
   - [turn](#turn) turn based agent
 - [Processors](#processors)
   - [shp](#shp) include shell command output
@@ -27,6 +27,9 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
   - [text](#text) convert any node to text node
   - [resolve](#resolve) resolve a variable
   - [prop](#prop) set additional properties of llm
+  - [head](#head) take first N lines of a file
+  - [tail](#tail) take last N lines of a file
+  - [slice](#slice) take lines from <start> to <finish> of a file
 
 
 ## Prompts
@@ -224,6 +227,9 @@ include project file list to system prompt
 
 include buffer content on osx
 @{| shp pbpaste }
+
+include current date
+@{| shp date }
 ```
 
 ### `init` 
@@ -324,4 +330,32 @@ system:
 @{ o3-mini | prop reasoning_effort=low temperature=2.0 }
 or
 @{ gpt-4o-search-preview | prop web_search_options={\} }
+```
+
+### `head`
+Take first *N* lines of text from a file or variable. Default is 20 lines.
+
+```chat
+user: 
+@{ filename.txt | head 10 }    # first 10 lines
+```
+
+### `tail`
+Take last *N* lines of text from a file or variable. Default is 20 lines.
+
+```chat
+user: 
+@{ filename.txt | tail 15 }    # last 15 lines
+```
+
+### `slice`
+Extract a range of lines from a file or variable.
+
+```chat
+user: 
+@{ filename.txt | slice 5 15 }      # lines 5 to 15 inclusive
+@{ filename.txt | slice 10 }        # from line 10 to end
+@{ filename.txt | slice -10 -1 }    # last 10 lines
+@{ filename.txt | slice -20 }       # last 20 lines
+@{ filename.txt | slice 1 20 }      # first 20 lines (like head 20)
 ```
