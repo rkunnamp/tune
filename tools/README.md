@@ -12,7 +12,7 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
   - [wf](#wf) write file
   - [patch](#patch) patch file
   - [sh](#sh) execute shell command
-  - [jina_r](#jina-r) read webpage content
+  - [jina_r](#jina_r) read webpage content
   - [brave](#brave) web search
   - [openai_tts](#openai_tts) text to speech from openai
   - [turn](#turn) turn based agent
@@ -230,6 +230,9 @@ include buffer content on osx
 
 include current date
 @{| shp date }
+
+pipe filename content to shell command
+@{ a.log | shp tail}
 ```
 
 ### `init` 
