@@ -15,6 +15,7 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
   - [jina_r](#jina_r) read webpage content
   - [brave](#brave) web search
   - [openai_tts](#openai_tts) text to speech from openai
+  - [gemini_ocr](#gemini_ocr) ask question about file content (PDF/audio/image)
   - [turn](#turn) turn based agent
   - [py](#py) run python code
   - [js](#js) run javascript code
@@ -180,6 +181,21 @@ Hasta la vista, baby!
 
 tool_result: 
 speech generated
+```
+
+
+### `gemini_ocr`
+Use gemini model to query all supported files (pdf/images/audio) [gemini api docs](https://ai.google.dev/gemini-api/docs/)
+
+```chat
+user: @gemini_ocr
+can you transcribe hasta_la_vista_baby.mp3? 
+
+tool_call: gemini_ocr {"filename":"hasta_la_vista_baby.mp3"}
+Transcribe audio
+
+tool_result: 
+Hasta la vista, baby.
 ```
 
 ### `turn`
