@@ -16,6 +16,8 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
   - [brave](#brave) web search
   - [openai_tts](#openai_tts) text to speech from openai
   - [turn](#turn) turn based agent
+  - [py](#py) run python code
+  - [js](#js) run javascript code
 - [Processors](#processors)
   - [shp](#shp) include shell command output
   - [init](#init) set initial value
@@ -214,12 +216,39 @@ Yes.
 ...
 ```
 
+### `py`
+execute python code
+```chat
+user: @py
+1234 + 4311
+
+tool_call: py
+1234 + 4311
+
+tool_result:
+5545
+```
+
+### `js`
+execut javascript code
+```chat
+user: @js
+1234 + 4311
+
+tool_call: js {"inputType":"commonjs"}
+1234 + 4311
+
+tool_result:
+5545
+
+```
+
 
 ## Processors
 [Processors](https://iovdin.github.io/tune/template-language/processors) is a way to modify variable or insert new ones into chat.
 
 ### `shp`
-Insert shell output
+Insert shell command output
 ```chat
 system:
 include project file list to system prompt
@@ -232,7 +261,9 @@ include current date
 @{| shp date }
 
 pipe filename content to shell command
-@{ a.log | shp tail}
+@{ a.log | shp tail }
+
+@{ a.log | shp grep pattern }
 ```
 
 ### `init` 
