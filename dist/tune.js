@@ -1,4 +1,4 @@
-var $roles, fs, assert, util;
+var $roles, fs, path, assert, util;
 
 function extend() {
   var _i;
@@ -74,28 +74,41 @@ var dJSON = (() => {
       for (var u in r) N(e, u, {
         get: r[u],
         enumerable: !0
-      })
+      });
     },
     j = (e, r, u, t) => {
-      if (r && typeof r == "object" || typeof r == "function")
-        for (let i of xe(r)) !ge.call(e, i) && i !== u && N(e, i, {
-          get: () => r[i],
-          enumerable: !(t = ye(r, i)) || t.enumerable
-        });
-      return e
+      if ((r && typeof r == "object") || typeof r == "function")
+        for (let i of xe(r))
+          !ge.call(e, i) &&
+          i !== u &&
+          N(e, i, {
+            get: () => r[i],
+            enumerable: !(t = ye(r, i)) || t.enumerable,
+          });
+      return e;
     },
     U = (e, r, u) => (j(e, r, "default"), u && j(u, r, "default")),
-    H = (e, r, u) => (u = e != null ? de(Ee(e)) : {}, j(r || !e || !e.__esModule ? N(u, "default", {
-      value: e,
-      enumerable: !0
-    }) : u, e)),
-    Fe = e => j(N({}, "__esModule", {
+    H = (e, r, u) => (
+      (u = e != null ? de(Ee(e)) : {}),
+      j(
+        r || !e || !e.__esModule ?
+        N(u, "default", {
+          value: e,
+          enumerable: !0
+        }) :
+        u,
+        e,
+      )
+    ),
+    Fe = (e) => j(N({}, "__esModule", {
       value: !0
     }), e);
   var P = c((We, D) => {
     typeof D == "object" && typeof D.exports == "object" && (D.exports = Y);
     Y.defunct = function(e) {
-      throw new Error("Unexpected character at index " + (this.index - 1) + ": " + e)
+      throw new Error(
+        "Unexpected character at index " + (this.index - 1) + ": " + e,
+      );
     };
 
     function Y(e) {
@@ -103,55 +116,88 @@ var dJSON = (() => {
       var r = [],
         u = [],
         t = 0;
-      this.state = 0, this.index = 0, this.input = "", this.addRule = function(n, v, x) {
+      (this.state = 0),
+      (this.index = 0),
+      (this.input = ""),
+      (this.addRule = function(n, v, x) {
         var y = n.global;
         if (!y) {
           var E = "g";
-          n.multiline && (E += "m"), n.ignoreCase && (E += "i"), n = new RegExp(n.source, E)
+          n.multiline && (E += "m"),
+            n.ignoreCase && (E += "i"),
+            (n = new RegExp(n.source, E));
         }
-        return Object.prototype.toString.call(x) !== "[object Array]" && (x = [0]), u.push({
-          pattern: n,
-          global: y,
-          action: v,
-          start: x
-        }), this
-      }, this.setInput = function(n) {
-        return t = 0, this.state = 0, this.index = 0, r.length = 0, this.input = n, this
-      }, this.lex = function() {
+        return (
+          Object.prototype.toString.call(x) !== "[object Array]" && (x = [0]),
+          u.push({
+            pattern: n,
+            global: y,
+            action: v,
+            start: x
+          }),
+          this
+        );
+      }),
+      (this.setInput = function(n) {
+        return (
+          (t = 0),
+          (this.state = 0),
+          (this.index = 0),
+          (r.length = 0),
+          (this.input = n),
+          this
+        );
+      }),
+      (this.lex = function() {
         if (r.length) return r.shift();
         for (this.reject = !0; this.index <= this.input.length;) {
-          for (var n = i.call(this).splice(t), v = this.index; n.length && this.reject;) {
+          for (
+            var n = i.call(this).splice(t), v = this.index; n.length && this.reject;
+
+          ) {
             var x = n.shift(),
               y = x.result,
               E = x.length;
-            this.index += E, this.reject = !1, t++;
+            (this.index += E), (this.reject = !1), t++;
             var f = x.action.apply(this, y);
             if (this.reject) this.index = y.index;
-            else if (typeof f < "u") switch (Object.prototype.toString.call(f)) {
-              case "[object Array]":
-                r = f.slice(1), f = f[0];
-              default:
-                return E && (t = 0), f
-            }
+            else if (typeof f < "u")
+              switch (Object.prototype.toString.call(f)) {
+                case "[object Array]":
+                  (r = f.slice(1)), (f = f[0]);
+                default:
+                  return E && (t = 0), f;
+              }
           }
           var F = this.input;
           if (v < F.length)
             if (this.reject) {
               t = 0;
               var f = e.call(this, F.charAt(this.index++));
-              if (typeof f < "u") return Object.prototype.toString.call(f) === "[object Array]" ? (r = f.slice(1), f[0]) : f
-            } else this.index !== v && (t = 0), this.reject = !0;
+              if (typeof f < "u")
+                return Object.prototype.toString.call(f) === "[object Array]" ?
+                  ((r = f.slice(1)), f[0]) :
+                  f;
+            } else this.index !== v && (t = 0), (this.reject = !0);
           else if (n.length) this.reject = !0;
-          else break
+          else break;
         }
-      };
+      });
 
       function i() {
-        for (var n = [], v = 0, x = this.state, y = this.index, E = this.input, f = 0, F = u.length; f < F; f++) {
+        for (
+          var n = [],
+            v = 0,
+            x = this.state,
+            y = this.index,
+            E = this.input,
+            f = 0,
+            F = u.length; f < F; f++
+        ) {
           var h = u[f],
             T = h.start,
             p = T.length;
-          if (!p || T.indexOf(x) >= 0 || x % 2 && p === 1 && !T[0]) {
+          if (!p || T.indexOf(x) >= 0 || (x % 2 && p === 1 && !T[0])) {
             var o = h.pattern;
             o.lastIndex = y;
             var s = o.exec(E);
@@ -159,53 +205,67 @@ var dJSON = (() => {
               var d = n.push({
                 result: s,
                 action: h.action,
-                length: s[0].length
+                length: s[0].length,
               });
               for (h.global && (v = d); --d > v;) {
                 var a = d - 1;
                 if (n[d].length > n[a].length) {
                   var _ = n[d];
-                  n[d] = n[a], n[a] = _
+                  (n[d] = n[a]), (n[a] = _);
                 }
               }
             }
           }
         }
-        return n
+        return n;
       }
     }
   });
   var k = c(() => {
-    String.fromCodePoint || function() {
-      var e = function() {
-          try {
-            var i = {},
-              n = Object.defineProperty,
-              v = n(i, i, i) && n
-          } catch {}
-          return v
-        }(),
-        r = String.fromCharCode,
-        u = Math.floor,
-        t = function(i) {
-          var n = 16384,
-            v = [],
-            x, y, E = -1,
-            f = arguments.length;
-          if (!f) return "";
-          for (var F = ""; ++E < f;) {
-            var h = Number(arguments[E]);
-            if (!isFinite(h) || h < 0 || h > 1114111 || u(h) != h) throw RangeError("Invalid code point: " + h);
-            h <= 65535 ? v.push(h) : (h -= 65536, x = (h >> 10) + 55296, y = h % 1024 + 56320, v.push(x, y)), (E + 1 == f || v.length > n) && (F += r.apply(null, v), v.length = 0)
-          }
-          return F
-        };
-      e ? e(String, "fromCodePoint", {
-        value: t,
-        configurable: !0,
-        writable: !0
-      }) : String.fromCodePoint = t
-    }()
+    String.fromCodePoint ||
+      (function() {
+        var e = (function() {
+            try {
+              var i = {},
+                n = Object.defineProperty,
+                v = n(i, i, i) && n;
+            } catch {}
+            return v;
+          })(),
+          r = String.fromCharCode,
+          u = Math.floor,
+          t = function(i) {
+            var n = 16384,
+              v = [],
+              x,
+              y,
+              E = -1,
+              f = arguments.length;
+            if (!f) return "";
+            for (var F = ""; ++E < f;) {
+              var h = Number(arguments[E]);
+              if (!isFinite(h) || h < 0 || h > 1114111 || u(h) != h)
+                throw RangeError("Invalid code point: " + h);
+              h <= 65535 ?
+                v.push(h) :
+                ((h -= 65536),
+                  (x = (h >> 10) + 55296),
+                  (y = (h % 1024) + 56320),
+                  v.push(x, y)),
+                (E + 1 == f || v.length > n) &&
+                ((F += r.apply(null, v)), (v.length = 0));
+            }
+            return F;
+          };
+        e
+          ?
+          e(String, "fromCodePoint", {
+            value: t,
+            configurable: !0,
+            writable: !0,
+          }) :
+          (String.fromCodePoint = t);
+      })();
   });
   var re = c((V, ee) => {
     "use strict";
@@ -214,7 +274,8 @@ var dJSON = (() => {
     });
     V.default = void 0;
     k();
-    var Le = /\\(u\{([0-9A-Fa-f]+)\}|u([0-9A-Fa-f]{4})|x([0-9A-Fa-f]{2})|([1-7][0-7]{0,2}|[0-7]{2,3})|(['"tbrnfv0\\]))|\\U([0-9A-Fa-f]{8})/g,
+    var Le =
+      /\\(u\{([0-9A-Fa-f]+)\}|u([0-9A-Fa-f]{4})|x([0-9A-Fa-f]{2})|([1-7][0-7]{0,2}|[0-7]{2,3})|(['"tbrnfv0\\]))|\\U([0-9A-Fa-f]{8})/g,
       Re = {
         0: "\0",
         b: "\b",
@@ -226,88 +287,142 @@ var dJSON = (() => {
         v: "\v",
         "'": "'",
         '"': '"',
-        "\\": "\\"
+        "\\": "\\",
       },
       K = function(r) {
-        return String.fromCodePoint(parseInt(r, 16))
+        return String.fromCodePoint(parseInt(r, 16));
       },
       we = function(r) {
-        return String.fromCodePoint(parseInt(r, 8))
+        return String.fromCodePoint(parseInt(r, 8));
       },
       _e = function(r) {
         return r.replace(Le, function(u, t, i, n, v, x, y, E) {
-          return i !== void 0 ? K(i) : n !== void 0 ? K(n) : v !== void 0 ? K(v) : x !== void 0 ? we(x) : E !== void 0 ? K(E) : Re[y]
-        })
+          return i !== void 0 ?
+            K(i) :
+            n !== void 0 ?
+            K(n) :
+            v !== void 0 ?
+            K(v) :
+            x !== void 0 ?
+            we(x) :
+            E !== void 0 ?
+            K(E) :
+            Re[y];
+        });
       };
     V.default = _e;
-    ee.exports = V.default
+    ee.exports = V.default;
   });
-  var ue = c(J => {
+  var ue = c((J) => {
     (function(e) {
       var r = String.fromCharCode;
 
       function u(p) {
-        for (var o = [], s = 0, d = p.length, a, _; s < d;) a = p.charCodeAt(s++), a >= 55296 && a <= 56319 && s < d ? (_ = p.charCodeAt(s++), (_ & 64512) == 56320 ? o.push(((a & 1023) << 10) + (_ & 1023) + 65536) : (o.push(a), s--)) : o.push(a);
-        return o
+        for (var o = [], s = 0, d = p.length, a, _; s < d;)
+          (a = p.charCodeAt(s++)),
+          a >= 55296 && a <= 56319 && s < d ?
+          ((_ = p.charCodeAt(s++)),
+            (_ & 64512) == 56320 ?
+            o.push(((a & 1023) << 10) + (_ & 1023) + 65536) :
+            (o.push(a), s--)) :
+          o.push(a);
+        return o;
       }
 
       function t(p) {
-        for (var o = p.length, s = -1, d, a = ""; ++s < o;) d = p[s], d > 65535 && (d -= 65536, a += r(d >>> 10 & 1023 | 55296), d = 56320 | d & 1023), a += r(d);
-        return a
+        for (var o = p.length, s = -1, d, a = ""; ++s < o;)
+          (d = p[s]),
+          d > 65535 &&
+          ((d -= 65536),
+            (a += r(((d >>> 10) & 1023) | 55296)),
+            (d = 56320 | (d & 1023))),
+          (a += r(d));
+        return a;
       }
 
       function i(p) {
-        if (p >= 55296 && p <= 57343) throw Error("Lone surrogate U+" + p.toString(16).toUpperCase() + " is not a scalar value")
+        if (p >= 55296 && p <= 57343)
+          throw Error(
+            "Lone surrogate U+" +
+            p.toString(16).toUpperCase() +
+            " is not a scalar value",
+          );
       }
 
       function n(p, o) {
-        return r(p >> o & 63 | 128)
+        return r(((p >> o) & 63) | 128);
       }
 
       function v(p) {
         if (!(p & 4294967168)) return r(p);
         var o = "";
-        return p & 4294965248 ? p & 4294901760 ? p & 4292870144 || (o = r(p >> 18 & 7 | 240), o += n(p, 12), o += n(p, 6)) : (i(p), o = r(p >> 12 & 15 | 224), o += n(p, 6)) : o = r(p >> 6 & 31 | 192), o += r(p & 63 | 128), o
+        return (
+          p & 4294965248 ?
+          p & 4294901760 ?
+          p & 4292870144 ||
+          ((o = r(((p >> 18) & 7) | 240)),
+            (o += n(p, 12)),
+            (o += n(p, 6))) :
+          (i(p), (o = r(((p >> 12) & 15) | 224)), (o += n(p, 6))) :
+          (o = r(((p >> 6) & 31) | 192)),
+          (o += r((p & 63) | 128)),
+          o
+        );
       }
 
       function x(p) {
-        for (var o = u(p), s = o.length, d = -1, a, _ = ""; ++d < s;) a = o[d], _ += v(a);
-        return _
+        for (var o = u(p), s = o.length, d = -1, a, _ = ""; ++d < s;)
+          (a = o[d]), (_ += v(a));
+        return _;
       }
 
       function y() {
         if (h >= F) throw Error("Invalid byte index");
         var p = f[h] & 255;
-        if (h++, (p & 192) == 128) return p & 63;
-        throw Error("Invalid continuation byte")
+        if ((h++, (p & 192) == 128)) return p & 63;
+        throw Error("Invalid continuation byte");
       }
 
       function E() {
         var p, o, s, d, a;
         if (h > F) throw Error("Invalid byte index");
         if (h == F) return !1;
-        if (p = f[h] & 255, h++, !(p & 128)) return p;
+        if (((p = f[h] & 255), h++, !(p & 128))) return p;
         if ((p & 224) == 192) {
-          if (o = y(), a = (p & 31) << 6 | o, a >= 128) return a;
-          throw Error("Invalid continuation byte")
+          if (((o = y()), (a = ((p & 31) << 6) | o), a >= 128)) return a;
+          throw Error("Invalid continuation byte");
         }
         if ((p & 240) == 224) {
-          if (o = y(), s = y(), a = (p & 15) << 12 | o << 6 | s, a >= 2048) return i(a), a;
-          throw Error("Invalid continuation byte")
+          if (
+            ((o = y()),
+              (s = y()),
+              (a = ((p & 15) << 12) | (o << 6) | s),
+              a >= 2048)
+          )
+            return i(a), a;
+          throw Error("Invalid continuation byte");
         }
-        if ((p & 248) == 240 && (o = y(), s = y(), d = y(), a = (p & 7) << 18 | o << 12 | s << 6 | d, a >= 65536 && a <= 1114111)) return a;
-        throw Error("Invalid UTF-8 detected")
+        if (
+          (p & 248) == 240 &&
+          ((o = y()),
+            (s = y()),
+            (d = y()),
+            (a = ((p & 7) << 18) | (o << 12) | (s << 6) | d),
+            a >= 65536 && a <= 1114111)
+        )
+          return a;
+        throw Error("Invalid UTF-8 detected");
       }
       var f, F, h;
 
       function T(p) {
-        f = u(p), F = f.length, h = 0;
+        (f = u(p)), (F = f.length), (h = 0);
         for (var o = [], s;
           (s = E()) !== !1;) o.push(s);
-        return t(o)
+        return t(o);
       }
-      e.version = "3.0.0", e.encode = x, e.decode = T
-    })(typeof J > "u" ? J.utf8 = {} : J)
+      (e.version = "3.0.0"), (e.encode = x), (e.decode = T);
+    })(typeof J > "u" ? (J.utf8 = {}) : J);
   });
   var pe = c((Pe, G) => {
     "use strict";
@@ -332,75 +447,124 @@ var dJSON = (() => {
         [/\s*}\s*/, Oe],
         [/\s*\[\s*/, Ve],
         [/\s*\]\s*/, Xe],
-        [/\s*\.\s*/, Be]
+        [/\s*\.\s*/, Be],
       ];
 
     function ne(e) {
-      return e = e.replace(/\\\//, "/"), Se(e)
+      return (e = e.replace(/\\\//, "/")), Se(e);
     }
 
     function Ne(e) {
-      let r = new Ce,
+      let r = new Ce(),
         u = 0,
         t = 0;
-      return r.addRule(/"((?:\\.|[^"])*?)($|")/, (i, n) => (u += i.length, {
-        type: le,
-        value: ne(n),
-        row: t,
-        col: u,
-        single: !1
-      })), r.addRule(/'((?:\\.|[^'])*?)($|'|(",?[ \t]*\n))/, (i, n) => (u += i.length, {
-        type: le,
-        value: ne(n),
-        row: t,
-        col: u,
-        single: !0
-      })), r.addRule(/[\-0-9]*\.[0-9]*([eE][\+\-]?)?[0-9]*(?:\s*)/, i => (u += i.length, {
-        type: te,
-        value: parseFloat(i),
-        row: t,
-        col: u
-      })), r.addRule(/\-?[0-9]+([eE][\+\-]?)[0-9]*(?:\s*)/, i => (u += i.length, {
-        type: te,
-        value: parseFloat(i),
-        row: t,
-        col: u
-      })), r.addRule(/\-?[0-9]+(?:\s*)/, i => (u += i.length, {
-        type: ce,
-        value: parseInt(i),
-        row: t,
-        col: u
-      })), je.forEach(i => {
-        r.addRule(i[0], n => (u += n.length, {
-          type: i[1],
-          value: n,
-          row: t,
-          col: u
-        }))
-      }), r.addRule(/\s/, i => {
-        i == `
-` ? (u = 0, t++) : u += i.length
-      }), r.addRule(/\S[ \t]*/, i => (u += i.length, {
-        type: me,
-        value: i,
-        row: t,
-        col: u
-      })), r.setInput(e), r
+      return (
+        r.addRule(
+          /"((?:\\.|[^"])*?)($|")/,
+          (i, n) => (
+            (u += i.length), {
+              type: le,
+              value: ne(n),
+              row: t,
+              col: u,
+              single: !1
+            }
+          ),
+        ),
+        r.addRule(
+          /'((?:\\.|[^'])*?)($|'|(",?[ \t]*\n))/,
+          (i, n) => (
+            (u += i.length), {
+              type: le,
+              value: ne(n),
+              row: t,
+              col: u,
+              single: !0
+            }
+          ),
+        ),
+        r.addRule(
+          /[\-0-9]*\.[0-9]*([eE][\+\-]?)?[0-9]*(?:\s*)/,
+          (i) => (
+            (u += i.length), {
+              type: te,
+              value: parseFloat(i),
+              row: t,
+              col: u
+            }
+          ),
+        ),
+        r.addRule(
+          /\-?[0-9]+([eE][\+\-]?)[0-9]*(?:\s*)/,
+          (i) => (
+            (u += i.length), {
+              type: te,
+              value: parseFloat(i),
+              row: t,
+              col: u
+            }
+          ),
+        ),
+        r.addRule(
+          /\-?[0-9]+(?:\s*)/,
+          (i) => (
+            (u += i.length), {
+              type: ce,
+              value: parseInt(i),
+              row: t,
+              col: u
+            }
+          ),
+        ),
+        je.forEach((i) => {
+          r.addRule(
+            i[0],
+            (n) => ((u += n.length), {
+              type: i[1],
+              value: n,
+              row: t,
+              col: u
+            }),
+          );
+        }),
+        r.addRule(/\s/, (i) => {
+          i ==
+            `
+` ?
+            ((u = 0), t++) :
+            (u += i.length);
+        }),
+        r.addRule(
+          /\S[ \t]*/,
+          (i) => ((u += i.length), {
+            type: me,
+            value: i,
+            row: t,
+            col: u
+          }),
+        ),
+        r.setInput(e),
+        r
+      );
     }
     G.exports.lexString = ie;
 
     function ie(e, r) {
       let u = Ne(e),
         t = "";
-      for (; t = u.lex();) r(t)
+      for (;
+        (t = u.lex());) r(t);
     }
     G.exports.getAllTokens = Ue;
 
     function Ue(e) {
       let r = [];
-      return ie(e, function(t) {
-        r.push(t)
-      }), r
+      return (
+        ie(e, function(t) {
+          r.push(t);
+        }),
+        r
+      );
     }
   });
   var he = c((ke, fe) => {
@@ -428,21 +592,24 @@ var dJSON = (() => {
       O = -4;
 
     function ae(e) {
-      e.peek == null && Object.defineProperty(e, "peek", {
-        enumerable: !1,
-        value: function() {
-          return this[this.length - 1]
-        }
-      }), e.last == null && Object.defineProperty(e, "last", {
-        enumerable: !1,
-        value: function(r) {
-          return this[this.length - (1 + r)]
-        }
-      })
+      e.peek == null &&
+        Object.defineProperty(e, "peek", {
+          enumerable: !1,
+          value: function() {
+            return this[this.length - 1];
+          },
+        }),
+        e.last == null &&
+        Object.defineProperty(e, "last", {
+          enumerable: !1,
+          value: function(r) {
+            return this[this.length - (1 + r)];
+          },
+        });
     }
 
     function l(e, r) {
-      return e && e.hasOwnProperty("type") && e.type == r
+      return e && e.hasOwnProperty("type") && e.type == r;
     }
     fe.exports.parse = qe;
 
@@ -451,83 +618,121 @@ var dJSON = (() => {
         t = [];
       ae(u), ae(t);
       let i = function(n) {
-        t.push(n)
+        t.push(n);
       };
-      De.lexString(e, i), t[0].type == O && t.last(0).type != A && t.push({
-        type: A,
-        value: "]",
-        row: -1,
-        col: -1
-      }), t[0].type == $ && t.last(0).type != I && t.push({
-        type: I,
-        value: "}",
-        row: -1,
-        col: -1
-      });
+      De.lexString(e, i),
+        t[0].type == O &&
+        t.last(0).type != A &&
+        t.push({
+          type: A,
+          value: "]",
+          row: -1,
+          col: -1
+        }),
+        t[0].type == $ &&
+        t.last(0).type != I &&
+        t.push({
+          type: I,
+          value: "}",
+          row: -1,
+          col: -1
+        });
       for (let n = 0; n < t.length; n++)
         for ("" + t[n].type, u.push(t[n]); w(u););
-      return u.length == 1 && u[0].type == X && (u = [{
-        type: S,
-        value: u[0].value
-      }]), Q(u[0], r)
+      return (
+        u.length == 1 &&
+        u[0].type == X &&
+        (u = [{
+          type: S,
+          value: u[0].value
+        }]),
+        Q(u[0], r)
+      );
     }
 
     function w(e) {
       let r = e.pop();
       switch (r.type) {
         case b:
-          if (r.value.trim() == "true") return e.push({
-            type: Z,
-            value: "true"
-          }), !0;
-          if (r.value.trim() == "false") return e.push({
-            type: Z,
-            value: "false"
-          }), !0;
-          if (r.value.trim() == "null") return e.push({
-            type: g,
-            value: null
-          }), !0;
+          if (r.value.trim() == "true")
+            return e.push({
+              type: Z,
+              value: "true"
+            }), !0;
+          if (r.value.trim() == "false")
+            return e.push({
+              type: Z,
+              value: "false"
+            }), !0;
+          if (r.value.trim() == "null")
+            return e.push({
+              type: g,
+              value: null
+            }), !0;
           break;
         case Me:
-          return l(e.peek(), b) ? (e.peek().value += r.value, !0) : (e.push({
-            type: b,
-            value: r.value
-          }), !0);
+          return l(e.peek(), b) ?
+            ((e.peek().value += r.value), !0) :
+            (e.push({
+              type: b,
+              value: r.value
+            }), !0);
         case oe:
-          return l(r, oe) && l(e.peek(), b) ? (e.peek().value += r.value, !0) : (r.type = g, e.push(r), !0);
+          return l(r, oe) && l(e.peek(), b) ?
+            ((e.peek().value += r.value), !0) :
+            ((r.type = g), e.push(r), !0);
         case Je:
-          return r.type = g, r.value = r.value, e.push(r), !0;
+          return (r.type = g), (r.value = r.value), e.push(r), !0;
         case Z:
-          return r.type = g, r.value == "true" ? r.value = !0 : r.value = !1, e.push(r), !0;
+          return (
+            (r.type = g),
+            r.value == "true" ? (r.value = !0) : (r.value = !1),
+            e.push(r),
+            !0
+          );
         case Ke:
-          return r.type = g, e.push(r), !0;
+          return (r.type = g), e.push(r), !0;
         case g:
-          if (l(e.peek(), L)) return r.type = q, e.pop(), e.push(r), !0;
-          if (l(e.peek(), m)) return r.type = M, e.pop(), e.push(r), !0;
+          if (l(e.peek(), L)) return (r.type = q), e.pop(), e.push(r), !0;
+          if (l(e.peek(), m)) return (r.type = M), e.pop(), e.push(r), !0;
           if (l(e.peek(), b) && l(e.last(1), g)) {
             let u = e.pop();
-            return e.peek().value += '"' + u.value + '"', e.peek().value += r.value, !0
+            return (
+              (e.peek().value += '"' + u.value + '"'),
+              (e.peek().value += r.value),
+              !0
+            );
           }
           if (l(e.peek(), b) && l(e.last(1), C)) {
             let u = e.pop(),
               t = e.peek().value.pop();
-            return t += '"' + u.value + '"', t += r.value, e.peek().value.push(t), !0
+            return (
+              (t += '"' + u.value + '"'),
+              (t += r.value),
+              e.peek().value.push(t),
+              !0
+            );
           }
           if (l(e.peek(), b) && l(e.last(1), X)) {
             let u = e.pop(),
               t = e.peek().value.pop(),
               i = r.single ? "'" : '"';
-            return t.value += i + u.value + i, t.value += r.value, e.peek().value.push(t), !0
+            return (
+              (t.value += i + u.value + i),
+              (t.value += r.value),
+              e.peek().value.push(t),
+              !0
+            );
           }
           if (l(e.peek(), b)) {
             let u = e.pop().value;
-            return r.value = u + r.value, e.push(r), !0
+            return (r.value = u + r.value), e.push(r), !0;
           }
           break;
         case R:
-          if (l(r, R) && l(e.peek(), L)) return r.type = q, e.pop(), e.push(r), !0;
-          if (l(e.peek(), m)) return r.type = M, e.pop(), e.push(r), !0;
+          if (l(r, R) && l(e.peek(), L))
+            return (r.type = q), e.pop(), e.push(r), !0;
+          if (l(e.peek(), m)) return (r.type = M), e.pop(), e.push(r), !0;
           break;
         case S:
           if (l(e.peek(), L)) {
@@ -535,14 +740,14 @@ var dJSON = (() => {
               type: q,
               value: r
             };
-            return e.pop(), e.push(u), !0
+            return e.pop(), e.push(u), !0;
           }
           if (l(e.peek(), m)) {
             let u = {
               type: M,
               value: r
             };
-            return e.pop(), e.push(u), !0
+            return e.pop(), e.push(u), !0;
           }
           if (l(e.peek(), b)) {
             let u = e.pop();
@@ -550,25 +755,30 @@ var dJSON = (() => {
               type: W,
               key: u.value.trim(),
               value: r
-            }), !0
+            }), !0;
           }
           break;
         case q:
-          return l(e.peek(), C) ? (e.peek().value.push(r.value), !0) : (e.push({
-            type: C,
-            value: [r.value]
-          }), !0);
+          return l(e.peek(), C) ?
+            (e.peek().value.push(r.value), !0) :
+            (e.push({
+              type: C,
+              value: [r.value]
+            }), !0);
         case C:
-          if (l(e.peek(), g)) return r.value.unshift(e.peek().value), e.pop(), e.push(r), !0;
-          if (l(e.peek(), R)) return r.value.unshift(e.peek().value), e.pop(), e.push(r), !0;
-          if (l(e.peek(), S)) return r.value.unshift(e.peek()), e.pop(), e.push(r), !0;
+          if (l(e.peek(), g))
+            return r.value.unshift(e.peek().value), e.pop(), e.push(r), !0;
+          if (l(e.peek(), R))
+            return r.value.unshift(e.peek().value), e.pop(), e.push(r), !0;
+          if (l(e.peek(), S))
+            return r.value.unshift(e.peek()), e.pop(), e.push(r), !0;
           if (l(e.peek(), b) && (e.last(1), L)) {
             let u = e.pop();
             for (e.push({
                 type: g,
                 value: u.value
               }), "" + u.value; w(e););
-            return e.push(r), !0
+            return e.push(r), !0;
           }
           if (l(e.peek(), C)) return e.peek().value.push(r.value[0]), !0;
           break;
@@ -579,18 +789,26 @@ var dJSON = (() => {
               type: W,
               key: u.value,
               value: r.value
-            }), !0
+            }), !0;
           }
-          throw new Error("Got a :value that can't be handled at line " + r.row + ":" + r.col);
+          throw new Error(
+            "Got a :value that can't be handled at line " + r.row + ":" + r.col,
+          );
         case W:
-          return l(e.last(0), L) && l(e.last(1), X) ? (e.last(1).value.push(r), e.pop(), !0) : (e.push({
-            type: X,
-            value: [r]
-          }), !0);
+          return l(e.last(0), L) && l(e.last(1), X) ?
+            (e.last(1).value.push(r), e.pop(), !0) :
+            (e.push({
+              type: X,
+              value: [r]
+            }), !0);
         case X:
-          if (l(e.peek(), X)) return r.value.forEach(function(u) {
-            e.peek().value.push(u)
-          }), !0;
+          if (l(e.peek(), X))
+            return (
+              r.value.forEach(function(u) {
+                e.peek().value.push(u);
+              }),
+              !0
+            );
           break;
         case A:
           if (l(e.peek(), C) && l(e.last(1), O)) {
@@ -598,32 +816,33 @@ var dJSON = (() => {
             return e.pop(), e.push({
               type: R,
               value: u.value
-            }), !0
+            }), !0;
           }
           if (l(e.peek(), R) && l(e.last(1), O)) {
             let u = e.pop();
             return e.pop(), e.push({
               type: R,
               value: [u.value]
-            }), !0
+            }), !0;
           }
-          if (l(e.peek(), O)) return e.pop(), e.push({
-            type: R,
-            value: []
-          }), !0;
+          if (l(e.peek(), O))
+            return e.pop(), e.push({
+              type: R,
+              value: []
+            }), !0;
           if (l(e.peek(), g) && l(e.last(1), O)) {
             let u = e.pop().value;
             return e.pop(), e.push({
               type: R,
               value: [u]
-            }), !0
+            }), !0;
           }
           if (l(e.peek(), S) && l(e.last(1), O)) {
             let u = e.pop();
             return e.pop(), e.push({
               type: R,
               value: [u]
-            }), !0
+            }), !0;
           }
           if (l(e.peek(), b) && l(e.last(1), L)) {
             let u = e.pop();
@@ -633,27 +852,33 @@ var dJSON = (() => {
               }), "" + u.value; w(e););
             return e.push({
               type: A
-            }), !0
+            }), !0;
           }
-          if (l(e.peek(), L) && (l(e.last(1), b) || l(e.last(1), S) || l(e.last(1), g))) {
-            for (e.pop(), e.push({
+          if (
+            l(e.peek(), L) &&
+            (l(e.last(1), b) || l(e.last(1), S) || l(e.last(1), g))
+          ) {
+            for (
+              e.pop(), e.push({
                 type: A,
                 value: "]"
-              }), "" + JSON.stringify(e); w(e););
-            return !0
+              }), "" + JSON.stringify(e); w(e);
+
+            );
+            return !0;
           }
           if (l(e.peek(), b) && l(e.last(1), O)) {
             let u = e.pop();
             return e.pop(), e.push({
               type: R,
               value: [u.value]
-            }), !0
+            }), !0;
           }
           if (l(e.peek(), L) && l(e.last(1), C)) {
             for (e.pop(), e.push({
                 type: A
               }), "" + JSON.stringify(e); w(e););
-            return !0
+            return !0;
           }
           break;
         case I:
@@ -662,12 +887,13 @@ var dJSON = (() => {
             return e.pop(), e.push({
               type: S,
               value: u.value
-            }), !0
+            }), !0;
           }
-          if (l(e.peek(), $)) return e.pop(), e.push({
-            type: S,
-            value: null
-          }), !0;
+          if (l(e.peek(), $))
+            return e.pop(), e.push({
+              type: S,
+              value: null
+            }), !0;
           if (l(e.peek(), b) && l(e.last(1), m)) {
             let u = e.pop();
             for (e.push({
@@ -676,7 +902,7 @@ var dJSON = (() => {
               }), "" + u.value; w(e););
             return e.push({
               type: I
-            }), !0
+            }), !0;
           }
           if (l(e.peek(), m)) {
             for (e.push({
@@ -685,12 +911,14 @@ var dJSON = (() => {
               }); w(e););
             return e.push({
               type: I
-            }), !0
+            }), !0;
           }
           if (l(e.peek(), L)) return e.pop(), e.push({
             type: I
           }), !0;
-          throw new Error("Found } that I can't handle at line " + r.row + ":" + r.col);
+          throw new Error(
+            "Found } that I can't handle at line " + r.row + ":" + r.col,
+          );
         case L:
           if (l(e.peek(), L)) return !0;
           if (l(e.peek(), b)) {
@@ -699,17 +927,17 @@ var dJSON = (() => {
                 type: g,
                 value: u.value
               }); w(e););
-            return e.push(r), !0
+            return e.push(r), !0;
           }
           if (l(e.peek(), m)) {
             for (e.push({
                 type: g,
                 value: null
               }); w(e););
-            return e.push(r), !0
+            return e.push(r), !0;
           }
       }
-      return e.push(r), !1
+      return e.push(r), !1;
     }
 
     function Q(e, r) {
@@ -718,20 +946,23 @@ var dJSON = (() => {
       if (Array.isArray(e)) {
         let t = [];
         for (; e.length > 0;) t.unshift(Q(e.pop()));
-        return t
+        return t;
       }
       if (l(e, S)) {
         let t = {};
-        return e.value === null ? {} : (e.value.forEach(function(i) {
-          let n = i.key,
-            v = Q(i.value);
-          r && n in t ? t[n] = {
-            value: t[n],
-            next: v
-          } : t[n] = v
-        }), t)
+        return e.value === null ?
+          {} :
+          (e.value.forEach(function(i) {
+              let n = i.key,
+                v = Q(i.value);
+              r && n in t ? (t[n] = {
+                value: t[n],
+                next: v
+              }) : (t[n] = v);
+            }),
+            t);
       }
-      return l(e, R) ? Q(e.value) : e.value
+      return l(e, R) ? Q(e.value) : e.value;
     }
   });
   var z = c((er, ve) => {
@@ -742,16 +973,24 @@ var dJSON = (() => {
     function Ye(e, r) {
       let u = !0,
         t = !1;
-      r && ("fallback" in r && r[u] === !1 && (u = !1), t = "duplicateKeys" in r && r.duplicateKeys === !0);
+      r &&
+        ("fallback" in r && r[u] === !1 && (u = !1),
+          (t = "duplicateKeys" in r && r.duplicateKeys === !0));
       try {
-        return Qe.parse(e, t)
+        return Qe.parse(e, t);
       } catch (i) {
         if (u === !1) throw i;
         try {
           let n = JSON.parse(e);
-          return console.warn("dirty-json got valid JSON that failed with the custom parser. We're returning the valid JSON, but please file a bug report here: https://github.com/RyanMarcus/dirty-json/issues  -- the JSON that caused the failure was: " + e), n
+          return (
+            console.warn(
+              "dirty-json got valid JSON that failed with the custom parser. We're returning the valid JSON, but please file a bug report here: https://github.com/RyanMarcus/dirty-json/issues  -- the JSON that caused the failure was: " +
+              e,
+            ),
+            n
+          );
         } catch {
-          throw i
+          throw i;
         }
       }
     }
@@ -810,6 +1049,15 @@ Context.prototype.resolve = (async function(name, args, ms) {
     name: name
   }));
   return res;
+});
+Context.prototype.text2run = (async function(text, opts) {
+  return text2run(text, this, opts);
+});
+Context.prototype.text2ast = (async function(text) {
+  return text2ast(text, this);
+});
+Context.prototype.text2paylod = (async function(text) {
+  return text2payload(text, this);
 });
 Context.prototype.read = (async function(name, args) {
   var resolved, _ref;
@@ -1111,7 +1359,7 @@ async function text2ast(text, ctx) {
     ctx = makeContext(ctx);
     nodeStack = nodeStack || [];
     var re;
-    re = /(?<prefix1>@{1,2})\{(?<name1>[^\}]+)\}|(?<prefix>@{1,2})(?<name>[\S]+)|(?<role>^(?:s|system|u|user|a|assistant|tc|tool_call|tr|tool_result|c|comment|au|audio|err|error))\s*(?<roleName>\([^\)]+\))?\s*:/gm;
+    re = /(?<prefix1>@{1,2})\{(?<name1>(?:\\\}|[^}])+)\}|(?<prefix>@{1,2})(?<name>[\S]+)|(?<role>^(?:s|system|u|user|a|assistant|tc|tool_call|tr|tool_result|c|comment|au|audio|err|error))\s*(?<roleName>\([^\)]+\))?\s*:/gm;
     var nodes;
     nodes = [];
     var index;
@@ -1157,6 +1405,7 @@ async function text2ast(text, ctx) {
       args = undefined;
       proc = undefined;
       (function(it) {
+        it = it.replace(/\\\}/g, "}");
         it = it.split("|");
         it = it.map((function(it) {
           return it.trim();
@@ -1602,6 +1851,15 @@ TunePromise.prototype.catch = (function(onRejected) {
 TunePromise.prototype.finally = (function(onFinally) {
   return this.promise.finally(onFinally);
 });
+fs = require('fs');
+path = require('path');
+
+function log() {
+  var _i;
+  var msgs = 1 <= arguments.length ? [].slice.call(arguments, 0, _i = arguments.length - 0) : (_i = 0, []);
+  return fs.appendFileSync(path.join(process.cwd(), "tune.log"), msgs.join(" ") + "\n");
+}
+log;
 
 function text2run(text, ctx, opts) {
   var msgs, stopVal, stream, ires, ierr, ifinish, resolve, reject, p;
