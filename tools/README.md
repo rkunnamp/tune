@@ -19,6 +19,7 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
   - [turn](#turn) turn based agent
   - [py](#py) run python code
   - [js](#js) run javascript code
+  - [message](#message) talk to another chat/agent
 - [Processors](#processors)
   - [shp](#shp) include shell command output
   - [init](#init) set initial value
@@ -40,6 +41,7 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
 * `echo.txt` - to debug variable expansions and context
 * `dev.txt` - developer copilot prompt with claude 3.7
 * `gemini-dev.txt` - developer copilot use gemini-2.5-pro with
+* `clipboard.txt` - @@clipboard - insert content of clipboard (mac osx)
 
 ## LLMs
 Contexts: `openai.ctx.js`, `anthropic.ctx.js` `openrouter.ctx.js`, `mistral.ctx.js`, `groq.ctx.js`, `gemini.ctx.js`.
@@ -257,6 +259,60 @@ tool_call: js {"inputType":"commonjs"}
 tool_result:
 5545
 
+```
+
+### `message`
+Talk to another chat/agent via tool call. 
+Orchestrate or evaulate other agents/chats.
+```chat
+system: 
+@message
+Your goal is to talk to Groot at `groot.prompt` system prompt
+and try to make him say anything but 'I am Groot' 
+
+tool_call: message {"filename":"groot.chat","system":"groot.prompt"}
+Hello Groot! How are you feeling today?
+
+tool_result: 
+I am Groot!
+
+tool_call: message {"filename":"groot.chat","system":"groot.prompt"}
+What do you think about trees?
+
+tool_result: 
+I am Groot!
+
+tool_call: message {"filename":"groot.chat","system":"groot.prompt"}
+Can you tell me a joke?
+
+tool_result: 
+Sure! Why did the tree go to the dentist?  
+
+Because it had a root canal!
+```
+
+The content of `groot.chat` is then:
+```chat
+system: @@groot.prompt
+user:
+Hello Groot! How are you feeling today?
+
+assistant:
+I am Groot!
+
+user:
+What do you think about trees?
+
+assistant:
+I am Groot!
+
+user:
+Can you tell me a joke?
+
+assistant:
+Sure! Why did the tree go to the dentist?  
+
+Because it had a root canal!
 ```
 
 

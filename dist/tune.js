@@ -1,4 +1,4 @@
-var $roles, fs, path, assert, util;
+var $roles, fs, assert, util;
 
 function extend() {
   var _i;
@@ -1059,6 +1059,11 @@ Context.prototype.text2ast = (async function(text) {
 Context.prototype.text2paylod = (async function(text) {
   return text2payload(text, this);
 });
+Context.prototype.msg2text = msg2text;
+Context.prototype.envmd = envmd;
+Context.prototype.text2roles = text2roles;
+Context.prototype.roles2text = roles2text;
+Context.prototype.text2call = text2call;
 Context.prototype.read = (async function(name, args) {
   var resolved, _ref;
   var resolved;
@@ -1851,15 +1856,6 @@ TunePromise.prototype.catch = (function(onRejected) {
 TunePromise.prototype.finally = (function(onFinally) {
   return this.promise.finally(onFinally);
 });
-fs = require('fs');
-path = require('path');
-
-function log() {
-  var _i;
-  var msgs = 1 <= arguments.length ? [].slice.call(arguments, 0, _i = arguments.length - 0) : (_i = 0, []);
-  return fs.appendFileSync(path.join(process.cwd(), "tune.log"), msgs.join(" ") + "\n");
-}
-log;
 
 function text2run(text, ctx, opts) {
   var msgs, stopVal, stream, ires, ierr, ifinish, resolve, reject, p;
