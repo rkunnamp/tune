@@ -1,9 +1,10 @@
 {
   "name": "tune-sdk",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "tune - your everyday LLM toolkit.",
   "main": "dist/tune.js",
   "module": "dist/tune.mjs",
+  "bin": "bin/cli.js",
   "exports": {
     ".": {
       "require": "./dist/tune.js",

@@ -2,6 +2,8 @@ const fs = require('fs')
 const path = require('path')
 
 module.exports = [
+  require("./openai.ctx.js"),
+  require("./openrouter.ctx.js"),
   require("./antrophic.ctx.js"),
   require("./gemini.ctx.js"),
   require("./mistral.ctx.js"),

@@ -1217,7 +1217,7 @@ function text2roles(text, lineNum) {
           memo.push(res);
           _ref = (memo.row += res.content.split("\n").length);
         } else {
-          _ref = undefined;
+          _ref = (((index === 0) && item) ? (memo.row += (item.split("\n").length - 1)) : undefined);
         }
         return _ref;
       })(item.match(/^(s|system|u|user|a|assistant|tc|tool_call|tr|tool_result|c|comment|au|audio|err|error)\s*:/));
@@ -1884,7 +1884,10 @@ function text2run(text, ctx, opts) {
   }));
   if (stream) p = new TunePromise((function(res, rej) {
     resolve = res;
-    return (reject = rej);
+    return (reject = (function(err) {
+      ierr = err;
+      return rej(err);
+    }));
   }), (async function() {
     var val;
     await _once((function() {
@@ -1919,7 +1922,7 @@ function text2run(text, ctx, opts) {
   }
   stop;
   async function doit() {
-    var ast, payload, res, ctype, err, reader, data, reData, reComment;
+    var ast, payload, res, ctype, err, reader, data, done, reData, reComment;
     while (!stop(msgs)) {
       var ast;
       ast = await text2ast(text + "\n" + msg2text(msgs), ctx);
@@ -1952,17 +1955,20 @@ function text2run(text, ctx, opts) {
       }
       var reader;
       var data;
+      var done;
       var reData;
       var reComment;
       reader = res.body
         .pipeThrough(new TextDecoderStream("utf8"))
         .getReader();
       data = "";
+      done = false;
       reData = new RegExp("^data: (.*)");
       reComment = new RegExp("^:.*");
       if (ctype.includes("text/event-stream")) {
-        while (res = await reader.read()) {
-          if (res.done) break;
+        while (!done) {
+          res = await reader.read();
+          done = (((typeof res !== "undefined") && (res !== null) && !Number.isNaN(res) && (typeof res.done !== "undefined") && (res.done !== null) && !Number.isNaN(res.done)) ? res.done : (((typeof true !== "undefined") && (true !== null) && !Number.isNaN(true)) ? true : undefined));
           (function(it) {
             it = it.split(/\n/);
             it = it.map((function(item) {
@@ -1975,17 +1981,21 @@ function text2run(text, ctx, opts) {
               var m;
               var m;
               m = item.match(reData);
-              return ((m && ('' === it[(index + 1)])) ? m[1] : undefined);
+              if ((!m || ('' !== it[(index + 1)]))) return;
+              if ((m[1] === '[DONE]')) {
+                done = true;
+                return;
+              }
+              return m[1];
             }));
             it = it.filter((function(item) {
               return item;
             }));
             it = it.map((function(item) {
-              return ((item === '[DONE]') ? item : JSON.parse(item));
+              return JSON.parse(item);
             }));
             it = it.reduce((function(msg, chunk) {
               var delta, tc, tcIdx;
-              if ((chunk === "[DONE]")) return msg;
               var delta;
               delta = (((typeof chunk !== "undefined") && (chunk !== null) && !Number.isNaN(chunk) && (typeof chunk.choices !== "undefined") && (chunk.choices !== null) && !Number.isNaN(chunk.choices) && (typeof chunk.choices[0] !== "undefined") && (chunk.choices[0] !== null) && !Number.isNaN(chunk.choices[0]) && (typeof chunk.choices[0].delta !== "undefined") && (chunk.choices[0].delta !== null) && !Number.isNaN(chunk.choices[0].delta)) ? chunk.choices[0].delta : (((typeof {} !== "undefined") && ({} !== null) && !Number.isNaN({})) ? {} : undefined));
               if ((((typeof chunk !== "undefined") && (chunk !== null) && !Number.isNaN(chunk) && (typeof chunk.error !== "undefined") && (chunk.error !== null) && !Number.isNaN(chunk.error)) ? chunk.error : undefined)) {
@@ -2013,7 +2023,7 @@ function text2run(text, ctx, opts) {
               value: msgs.concat(Array(it))
             });
             return it;
-          })(data += res.value);
+          })(data += (((typeof res !== "undefined") && (res !== null) && !Number.isNaN(res) && (typeof res.value !== "undefined") && (res.value !== null) && !Number.isNaN(res.value)) ? res.value : (((typeof "" !== "undefined") && ("" !== null) && !Number.isNaN("")) ? "" : undefined)));
         }
       }
       if (ires) msgs = ires.value;
@@ -2201,8 +2211,8 @@ function text2cut(text, cursor) {
   return (function(line) {
     return (function(it) {
       it = it.map((function(item) {
-        item.start = line;
-        line = line + item.content.split("\n").length;
+        item.start = item.row;
+        line = item.row + item.content.split("\n").length;
         item.end = line;
         if (((item.role === "comment") && item.content.match(/^\s*\-{3,}\s*$/))) item.delim = true;
         return item;
@@ -2230,7 +2240,7 @@ function text2cut(text, cursor) {
         end: it["slice"](-1)[0].end
       });
       return it;
-    })(text2roles(text));
+    })(text2roles(text, true));
   })(0);
 }
 text2cut;

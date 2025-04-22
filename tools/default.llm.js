@@ -1,2 +1,2 @@
-module.exports = require("./openai")({ model:  "gpt-4o-mini" })
+module.exports = require("./openai")({ model:  "gpt-4.1-mini" })
 
