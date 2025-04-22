@@ -20,26 +20,6 @@ process.argv.slice(2).forEach(arg => {
   }
 });
 
-// Example usage outputs (replace with your real logic)
-/*
-if (args.filename) {
-  console.log('filename:', args.filename);
-}
-if (args.system) {
-  console.log('system:', args.system);
-}
-if (args.user) {
-  console.log('user:', args.user);
-}
-if ('save' in args) {
-  console.log('save flag set');
-}
-if (args.stop) {
-  console.log('stop:', args.stop);
-}
-*/
-
-// Place your main script/logic here
 const tune = require('../dist/tune.js');
 const { fsctx } = require('../dist/fsctx.js');
 const fs = require("fs"); 
@@ -105,9 +85,19 @@ async function main() {
       throw(Error(`err: Context file export is not an array of functions or function ${filename}`))
     }
   }
+  let stopVal = args.stop || "assistant";
+  if (stopVal !== "step" && stopVal != "assistant") {
+    stopVal = function(msgs) {
+      if (!msgs.length) return false
+      const lastMsg = msgs[msgs.length - 1]
+      if (!lastMsg.content) return false
+      return (lastMsg.content.indexOf(args.stop) !== -1)
+    }
+  }
+
+  let res = await tune.text2run(chat, ctx, { stop: stopVal })
 
   const longFormatRegex = /^(system|user|tool_call|tool_result|assistant|error):/;
-  let res = await tune.text2run(chat, ctx, args.step || "assistant")
   res = tune.msg2text(res, longFormatRegex.test(chat))
   if (args.filename && args.save) {
     chat += "\n" + res 
