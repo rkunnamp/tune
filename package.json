@@ -1,6 +1,6 @@
 {
   "name": "tune-sdk",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "tune - your everyday LLM toolkit.",
   "main": "dist/tune.js",
   "module": "dist/tune.mjs",
@@ -23,6 +23,6 @@
   },
   "license": "MIT",
   "files": [
-    "dist"
+    "dist", "tools"
   ]
 }

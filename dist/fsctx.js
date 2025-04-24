@@ -1,4 +1,4 @@
-var path, tune, makeContext, envmd, TuneError, text2run;
+var path, tune, envmd, TuneError, text2run;
 
 function extend() {
   var _i;
@@ -616,7 +616,6 @@ if (typeof window !== "undefined") {
 }
 path = require("path");
 tune = require("./tune");
-makeContext = tune.makeContext;
 envmd = tune.envmd;
 TuneError = tune.TuneError;
 text2run = tune.text2run;
@@ -669,9 +668,10 @@ async function runFile(filename, ctx) {
       text = await node.read();
       var lctx;
       lctx = ctx.clone();
+      lctx.stack.push(node);
       lctx.ms.unshift(envmd(args[0]));
       var res;
-      res = await text2run(text, lctx, {
+      res = await lctx.text2run(text, {
         stop: "assistant"
       });
       _ref = res["slice"](-1)[0].content.replace(/@/g, "\\@");
@@ -832,7 +832,7 @@ function fsctx(paths, opts, fs) {
                 fs.writeFileSync(schemaFile, schema);
                 schema = JSON.parse(schema);
               } else {
-                throw new TuneError(("schema file not found " + schemaFile));
+                throw new Error(("schema file not found " + schemaFile));
               }
               _ref1 = {
                 type: "tool",

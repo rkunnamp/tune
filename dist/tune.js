@@ -1017,6 +1017,7 @@ function Context() {
     return (item.name === "write");
   }));
   this.stack = [];
+  this.type = "Context";
   return this;
 }
 Context;
@@ -1145,7 +1146,6 @@ envmd;
 function makeContext() {
   var ctx, _i;
   var args = 1 <= arguments.length ? [].slice.call(arguments, 0, _i = arguments.length - 0) : (_i = 0, []);
-  if ((args[0] instanceof Context)) return args[0];
   var ctx;
   ctx = new Context();
   if (!args[0]) return ctx;
@@ -1360,16 +1360,14 @@ async function text2ast(text, ctx) {
   var lastRole;
   lastRole = '';
   async function parse(text, recursive, ctx) {
-    var nodeStack, re, nodes, index, m, match, role, roleName, name, prefix, args, proc, row, col, filename, resolved, pargs, pname, p, err, schema, lctx, _ref, _i, _i0, _ref0, _len;
-    ctx = makeContext(ctx);
+    var nodeStack, nodes, index, reAst, m, match, role, roleName, name, prefix, args, proc, row, col, filename, resolved, pargs, pname, p, err, schema, lctx, _ref, _i, _i0, _ref0, _len;
     nodeStack = nodeStack || [];
-    var re;
-    re = /(?<prefix1>@{1,2})\{(?<name1>(?:\\\}|[^}])+)\}|(?<prefix>@{1,2})(?<name>[\S]+)|(?<role>^(?:s|system|u|user|a|assistant|tc|tool_call|tr|tool_result|c|comment|au|audio|err|error))\s*(?<roleName>\([^\)]+\))?\s*:/gm;
     var nodes;
     nodes = [];
     var index;
     index = 0;
-    while (m = re.exec(text)) {
+    reAst = /(?<prefix1>@{1,2})\{(?<name1>(?:\\\}|[^}])+)\}|(?<prefix>@{1,2})(?<name>[\S]+)|(?<role>^(?:s|system|u|user|a|assistant|tc|tool_call|tr|tool_result|c|comment|au|audio|err|error))\s*(?<roleName>\([^\)]+\))?\s*:/gm;
+    while (m = reAst.exec(text)) {
       if (((lastRole === "a" || lastRole === "tc" || lastRole === "err" || lastRole === "assistant" || lastRole === "tool_call" || lastRole === "error") && !m.groups.role)) continue;
       if (((m.index > 0) && (text.charAt(m.index - 1) === String.fromCharCode(92)))) continue;
       if ((m.index - index)) {
@@ -1756,7 +1754,6 @@ function ast2payload(ast) {
 ast2payload;
 async function payload2http(payload, ctx) {
   var llm, stack, lastStack, body, _ref;
-  ctx = makeContext(ctx);
   var llm;
   llm = payload.llm;
   delete payload.llm;
@@ -1789,7 +1786,6 @@ async function toolCall(payload, ctx) {
   var lastMsg;
   lastMsg = payload.messages["slice"](-1)[0];
   if (((((typeof lastMsg !== "undefined") && (lastMsg !== null) && !Number.isNaN(lastMsg) && (typeof lastMsg.tool_calls !== "undefined") && (lastMsg.tool_calls !== null) && !Number.isNaN(lastMsg.tool_calls) && (typeof lastMsg.tool_calls.length !== "undefined") && (lastMsg.tool_calls.length !== null) && !Number.isNaN(lastMsg.tool_calls.length)) ? lastMsg.tool_calls.length : (((typeof 0 !== "undefined") && (0 !== null) && !Number.isNaN(0)) ? 0 : undefined)) === 0)) return [];
-  ctx = makeContext(ctx);
   var tools;
   tools = (payload.tools || [])
     .reduce((function(memo, tool) {
@@ -1860,7 +1856,6 @@ TunePromise.prototype.finally = (function(onFinally) {
 function text2run(text, ctx, opts) {
   var msgs, stopVal, stream, ires, ierr, ifinish, resolve, reject, p;
   if (!ctx) throw Error("context not set");
-  ctx = makeContext(ctx);
   var msgs;
   var stopVal;
   var stream;
@@ -2300,6 +2295,7 @@ fs = require("fs");
 assert = require("node:assert/strict");
 util = require("util");
 exports.makeContext = makeContext;
+exports.Context = Context;
 exports.text2roles = text2roles;
 exports.roles2text = roles2text;
 exports.text2call = text2call;

@@ -20,8 +20,10 @@ const {
   envmd,
   unescape,
   escape,
+  Context,
 } = require("./tune.js");
 export {
+  Context,
   makeContext,
   text2roles,
   roles2text,

@@ -8,7 +8,6 @@ export default async function prop(node, args, ctx) {
   if (!node || node.type !== 'llm') {
     return node
   }
-  console.log(args)
 
   const re = /(?<name>\w+)\s*=/
   let lastName;
@@ -28,8 +27,6 @@ export default async function prop(node, args, ctx) {
   if (lastName) {
     vars[lastName] = parseVal(text.trim())
   }
-  console.log(vars)
-
   return {
     ...node,
     exec: async (payload, ctx) => node.exec({ ...payload, ...vars }, ctx)
