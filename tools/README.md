@@ -15,6 +15,7 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
   - [jina_r](#jina_r) read webpage content
   - [brave](#brave) web search
   - [openai_tts](#openai_tts) text to speech from openai
+  - [openai_imgen](#openai_imgen) generate and edit images with openai gpt-image model
   - [gemini_ocr](#gemini_ocr) ask question about file content (PDF/audio/image)
   - [turn](#turn) turn based agent
   - [py](#py) run python code
@@ -183,6 +184,22 @@ Hasta la vista, baby!
 
 tool_result: 
 speech generated
+```
+
+### `openai_imgen`
+use openai [image generation api](https://platform.openai.com/docs/guides/image-generation)
+
+```chat
+user: @openai_imgen
+draw a stickman with talking bubble "Hello world"
+
+assistant: 
+tool_call: openai_imgen {"filename":"stickman_hello_world.png"}
+a simple stickman drawing with a talking bubble saying 'Hello world'
+
+tool_result: 
+image generated
+
 ```
 
 

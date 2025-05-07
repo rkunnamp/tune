@@ -1,0 +1,25 @@
+
+{
+  "description": "generate/modify images using openai image generation",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "text": {
+        "type": "string",
+        "description": "The prompt text for image generation or editing."
+      },
+      "filename": {
+        "type": "string",
+        "description": "The filename where the generated image will be saved."
+      },
+      "images": {
+        "type": "array",
+        "description": "Optional array of image file paths to be used for image editing. If provided, the API will use the edits endpoint instead of generations.",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": ["text", "filename"]
+  }
+}
