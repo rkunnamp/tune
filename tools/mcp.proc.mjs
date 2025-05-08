@@ -71,7 +71,6 @@ async function getMcpClient(args, env) {
       while ((index = buf.indexOf('\n')) !== -1) {
         const line = buf.toString("utf8", 0, index);
         buf = buf.subarray(index + 1);
-        console.log("line", line)
         const msg = JSON.parse(line)
         if (msg.id && callbacks[msg.id]) {
           const { resolve, reject} = callbacks[msg.id]

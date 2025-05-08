@@ -6,7 +6,6 @@ module.exports = async function(node, args) {
   }
   const newNode = Object.assign({}, node)
   newNode.type = "text"
-  console.log(node)
   newNode.read = async function() {
     return fs.readFileSync(node.fullname, "utf8")
   }
