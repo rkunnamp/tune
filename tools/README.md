@@ -25,7 +25,7 @@ Set `TUNE_PATH` to the directory to make them available in tune editor extension
   - [shp](#shp) include shell command output
   - [init](#init) set initial value
   - [mcp](#mcp) connect mcp tools
-  - [json schema](#json_schema) set json_schema response
+  - [json_format](#json_format) make llm respond with json
   - [log](#log) save llm payload
   - [mock](#mock) set variables inline
   - [linenum](#linenum) prepend line numbers
@@ -376,11 +376,40 @@ tool_result:
 Allowed directories:
 /Users/username/projects/tune
 ```
-### `json_schema`
-Set llm response format to json_schema
+### `json_format`
+Set llm response format to json [read more](https://platform.openai.com/docs/guides/structured-outputs?api-mode=chat).
+
+Without arguments it sets
+```json
+"response_format": {
+  "type": "json_object"
+}
+```
+
 ```chat
 system: 
-@{ gpt-4o | json_schema path/to/schema.json }
+@{ gpt-4o | json_format }
+please reply in json format:
+{ "message": "Your reply"}
+
+user: 
+hi how are you?
+
+assistant:
+{ "message": "I'm just a virtual assistant, so I don't have feelings, but I'm here and ready to help you! How can I assist you today?" }
+
+```
+
+with argument it sets 
+```json
+response_format: { 
+    "type": "json_schema", 
+    "json_schema": { "schema": <contents of the file argument> }
+```
+
+```chat
+system: 
+@{ gpt-4o | json_format path/to/schema.json }
 ```
 
 ### `log` 
